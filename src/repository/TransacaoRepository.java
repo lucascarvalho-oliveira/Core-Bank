@@ -31,5 +31,30 @@ public class TransacaoRepository {
         }
     }
 
-    public void extrato(int id_conta){}
+    public void extrato(int id_conta){
+        String sql = "SELECT * FROM transacao WHERE id_conta_fk = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ){
+            stmt.setInt(1, id_conta);
+
+            ResultSet rs = stmt.executeQuery();
+
+            boolean temDados = false;
+            while(rs.next()){
+                temDados = true;
+                System.out.println("\n=======================================================================");
+                System.out.println("Data e Hora: " + rs.getTimestamp("data_hora").toLocalDateTime());
+                System.out.println("Tipo: " + rs.getString("tipo_transacao"));
+                System.out.println("Valor: R$ " + rs.getDouble("valor"));
+            }
+
+            if(!temDados){
+                System.out.println("Nenhum histórico encontrado para essa conta.");
+            }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }

@@ -49,31 +49,6 @@ public class ContaRepository {
         }
     }
 
-    public Conta buscarContaIdConta(int id_conta){
-        String sql = "SELECT * FROM conta WHERE id_conta = ?";
-
-        try(Connection conn = new Conexao().conectar();
-            PreparedStatement stmt = conn.prepareStatement(sql);
-        ){
-            stmt.setInt(1, id_conta);
-
-            ResultSet rs = stmt.executeQuery();
-
-            if(rs.next()){
-                Conta conta = new Conta();
-                conta.setId_conta(rs.getInt("id_conta"));
-                conta.setSaldo(rs.getDouble("saldo"));
-                conta.setTipoConta(TipoConta.valueOf(rs.getString("tipo_conta")));
-                conta.setLimite(rs.getDouble("limite"));
-
-                return conta;
-            }
-        }catch (SQLException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-
     public Conta buscarContaIdPessoa(int id_pessoa){
         String sql = "SELECT * FROM conta WHERE id_conta_fk = ?";
 
@@ -94,6 +69,32 @@ public class ContaRepository {
                 return conta;
             }
         }catch (SQLException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public Conta buscarContaIdConta(int id_conta){
+        String sql = "SELECT * FROM conta WHERE id_conta = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+        ){
+            stmt.setInt(1, id_conta);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()){
+                Conta conta = new Conta();
+                conta.setId_conta(rs.getInt("id_conta"));
+                conta.setSaldo(rs.getDouble("saldo"));
+                conta.setTipoConta(TipoConta.valueOf(rs.getString("tipo_conta")));
+                conta.setLimite(rs.getDouble("limite"));
+
+                return conta;
+            }
+        }catch (SQLException e){
+            System.out.println("Conta nao encontrada!");
             e.printStackTrace();
         }
         return null;

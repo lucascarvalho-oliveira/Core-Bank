@@ -4,14 +4,15 @@ import model.enums.TipoPix;
 
 public class Pix {
     private int id_pix;
-    private String chave;
     private TipoPix tipoPix;
+    private String chave;
 
     private Conta conta;
 
-    public Pix(String chave, TipoPix tipoPix, Conta conta) {
+    public Pix(TipoPix tipoPix, String chave, Conta conta) {
         this.chave = chave;
         this.tipoPix = tipoPix;
+
         this.conta = conta;
     }
 

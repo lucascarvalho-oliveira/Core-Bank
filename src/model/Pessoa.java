@@ -2,25 +2,27 @@ package model;
 
 import model.enums.TipoPessoa;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Pessoa {
     private int id_pessoa;
     private String nome;
+    private TipoPessoa tipoPessoa;
     private String documento;
     private String senha;
-    private TipoPessoa tipoPessoa;
 
     private List<Conta> conta;
 
     public Pessoa(){}
 
-    public Pessoa(String nome, String documento, String senha, TipoPessoa tipoPessoa, List<Conta> conta) {
+    public Pessoa(String nome, TipoPessoa tipoPessoa, String documento, String senha) {
         this.nome = nome;
+        this.tipoPessoa = tipoPessoa;
         this.documento = documento;
         this.senha = senha;
-        this.tipoPessoa = tipoPessoa;
-        this.conta = conta;
+
+        this.conta = new ArrayList<>();
     }
 
     public int getId_pessoa() {

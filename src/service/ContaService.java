@@ -49,11 +49,7 @@ public class ContaService {
                 throw new IllegalArgumentException("Saldo insuficiente para essa transação");
             }
 
-
-            if(valor > conta.getSaldo()){
-                if(!usarLimite){
-                    throw new IllegalArgumentException("Saldo insuficiente");
-                }
+            if(usarLimite){
                 double sobra = conta.getSaldo() - valor;
                 double soma = sobra + conta.getLimite();
 
@@ -91,7 +87,7 @@ public class ContaService {
             throw new IllegalArgumentException("Chave pix não encontrada");
         }
 
-        Conta contaDestino = repositoryConta.buscarConta(idContaDestino);
+        Conta contaDestino = repositoryConta.buscarContaIdConta(idContaDestino);
 
         if(contaDestino == null){
             throw new IllegalArgumentException("Conta destino não encontrada");

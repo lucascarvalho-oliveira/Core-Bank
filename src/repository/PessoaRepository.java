@@ -50,6 +50,7 @@ public class PessoaRepository {
                 return  pessoa;
             }
         }catch (SQLException e){
+            System.out.println("Pessoa nao encontrada!");
             e.printStackTrace();
         }
         return null;

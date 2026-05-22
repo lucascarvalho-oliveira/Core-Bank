@@ -20,7 +20,7 @@ public class Senha {
     public boolean validarSimbolos(String senha){
         String simbolos = ".*[^a-zA-Z0-9].*";
 
-        return senha.matches(simbolos);
+        return senha.matches(simbolos) && senha.matches(".*/[A-Z]/.*");
     }
 
     public boolean validarSenha(Pessoa pessoa, String senhaDigitada){
