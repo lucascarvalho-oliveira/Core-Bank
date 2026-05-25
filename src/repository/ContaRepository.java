@@ -2,6 +2,7 @@ package repository;
 
 import database.Conexao;
 import model.Conta;
+import model.Pessoa;
 import model.enums.TipoConta;
 
 import java.sql.*;
@@ -14,8 +15,8 @@ public class ContaRepository {
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ){
             stmt.setDouble(1, conta.getSaldo());
-            stmt.setString(2, conta.getTipoConta().name());
-            stmt.setDouble(3, conta.getLimite());
+            stmt.setDouble(2, conta.getLimite());
+            stmt.setString(3, conta.getTipoConta().name());
             stmt.setInt(4, conta.getPessoa().getId_pessoa());
 
             stmt.executeUpdate();
@@ -43,14 +44,14 @@ public class ContaRepository {
             stmt.setInt(2, conta.getId_conta());
 
             stmt.executeUpdate();
-            System.out.println("\nSaldo atualizado!\n");
+            System.out.println("\nSaldo atualizado!");
         }catch (SQLException e){
             System.out.println("\nERRO! ao atualizar o saldo!\n");
         }
     }
 
     public Conta buscarContaIdPessoa(int id_pessoa){
-        String sql = "SELECT * FROM conta WHERE id_conta_fk = ?";
+        String sql = "SELECT * FROM conta WHERE id_pessoa_fk = ?";
 
         try(Connection conn = new Conexao().conectar();
             PreparedStatement stmt = conn.prepareStatement(sql);

@@ -7,7 +7,7 @@ import java.sql.*;
 
 public class PessoaRepository {
     public void salvarPessoa(Pessoa pessoa){
-        String sql = "INSERT INTO pessoa(nome, documento, tipo_pessoa) VALUES(?, ?, ?)";
+        String sql = "INSERT INTO pessoa(nome, documento, tipo_pessoa, senha) VALUES(?, ?, ?, ?)";
 
         try(Connection conn = new Conexao().conectar();
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
@@ -15,6 +15,7 @@ public class PessoaRepository {
             stmt.setString(1, pessoa.getNome());
             stmt.setString(2, pessoa.getDocumento());
             stmt.setString(3, pessoa.getTipoPessoa().name());
+            stmt.setString(4, pessoa.getSenha());
 
             stmt.executeUpdate();
 

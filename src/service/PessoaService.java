@@ -10,10 +10,14 @@ import repository.PessoaRepository;
 public class PessoaService {
     private PessoaRepository repositoryPessoa;
     private Senha senha;
+    private CPF cpf;
+    private CNPJ cnpj;
 
-    public PessoaService(PessoaRepository repositoryPessoa, Senha senha){
+    public PessoaService(PessoaRepository repositoryPessoa, Senha senha, CPF cpf, CNPJ cnpj){
         this.repositoryPessoa = repositoryPessoa;
         this.senha = senha;
+        this.cpf = cpf;
+        this.cnpj = cnpj;
     }
 
     public void salvarPessoa(Pessoa pessoa){
@@ -31,10 +35,10 @@ public class PessoaService {
         }
 
         if(pessoa.getTipoPessoa() == TipoPessoa.PESSOA_FISiCA){
-            CPF cpf = new CPF(pessoa.getDocumento());
+            cpf.confirmaCpf(pessoa.getDocumento());
         }
         if(pessoa.getTipoPessoa() == TipoPessoa.PESSOA_JURIDICA){
-            CNPJ cnpj = new CNPJ(pessoa.getDocumento());
+            cnpj.confirmaCnpj(pessoa.getDocumento());
         }
 
         repositoryPessoa.salvarPessoa(pessoa);

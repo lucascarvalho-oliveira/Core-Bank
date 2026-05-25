@@ -1,14 +1,11 @@
 package model;
 
 public class CPF {
-    private final String cpf;
 
-    public CPF(String cpf){
+    public void confirmaCpf(String cpf){
         if(cpf == null || !ehValido(cpf.replaceAll("\\D", ""))){
             throw new IllegalArgumentException("CPF inválido");
         }
-
-        this.cpf =  cpf.replaceAll("\\D", "");
     }
 
     public boolean ehValido(String cpf){
@@ -48,10 +45,5 @@ public class CPF {
         }else{
             return 11 - restoDivisao;
         }
-    }
-
-    @Override
-    public String toString() {
-        return this.cpf;
     }
 }

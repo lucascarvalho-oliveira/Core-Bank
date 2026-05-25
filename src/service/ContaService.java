@@ -1,25 +1,27 @@
 package service;
 
 import model.Conta;
+import model.Pessoa;
 import model.enums.TipoConta;
 import repository.ContaRepository;
 import repository.PixRepository;
 
-import java.util.Scanner;
-
 public class ContaService {
     private ContaRepository repositoryConta;
     private PixRepository repositoryPix;
+    private Pessoa pessoa;
 
-    public ContaService(ContaRepository repositoryConta, PixRepository repositoryPix){
+    public ContaService(ContaRepository repositoryConta, PixRepository repositoryPix, Pessoa pessoa){
         this.repositoryConta = repositoryConta;
         this.repositoryPix = repositoryPix;
+        this.pessoa = pessoa;
     }
 
     public Conta criarConta(TipoConta tipoConta){
         Conta conta = new Conta();
 
         conta.setTipoConta(tipoConta);
+        conta.setPessoa(pessoa);
 
         if(tipoConta == TipoConta.CONTA_CORRENTE){
             conta.setLimite(500);

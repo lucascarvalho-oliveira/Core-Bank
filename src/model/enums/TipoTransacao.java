@@ -1,7 +1,7 @@
 package model.enums;
 
 public enum TipoTransacao {
-    SACAR,
-    DEPOSITAR,
+    SAQUE,
+    DEPOSITO,
     MOVIMENTACAO
 }

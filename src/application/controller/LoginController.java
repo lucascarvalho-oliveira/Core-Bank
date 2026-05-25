@@ -18,13 +18,13 @@ public class LoginController {
     public Pessoa loginPessoa(Scanner sc){
         Pessoa pessoa = null;
         while (true) {
-            System.out.println("Informe o seu documento:");
+            System.out.println("\nInforme o seu documento:");
             String documento = sc.nextLine();
 
             pessoa = repositoryPessoa.buscarPessoa(documento);
 
             if (pessoa == null) {
-                System.out.println("Usuário não encontrado! Tente novamente.");
+                System.out.println("\nUsuário não encontrado! Tente novamente.");
                 continue;
             }
 
@@ -32,10 +32,10 @@ public class LoginController {
             String senhaConta = sc.nextLine();
 
             if(senha.validarSenha(pessoa, senhaConta)){
-                System.out.println("Login feito com sucesso!");
+                System.out.println("\nLogin feito com sucesso!");
                 break;
             }else{
-                System.out.println("Senha incorreta!");
+                System.out.println("\nSenha incorreta!");
             }
         }
         return pessoa;

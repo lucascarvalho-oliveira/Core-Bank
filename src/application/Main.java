@@ -3,8 +3,7 @@ package application;
 import application.controller.ContaController;
 import application.controller.CriarContaController;
 import application.controller.LoginController;
-import model.Pessoa;
-import model.Senha;
+import model.*;
 import repository.ContaRepository;
 import repository.PessoaRepository;
 import repository.PixRepository;
@@ -19,6 +18,7 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         PessoaRepository repositoryPessoa = new PessoaRepository();
         Senha senha = new Senha();
+        CPF cpf = new CPF();
 
         boolean sair = false;
         do {
@@ -30,28 +30,36 @@ public class Main {
 
             switch (menu){
                 case 1:
-                    PessoaService servicePessoa = new PessoaService(repositoryPessoa, senha);
+                    CNPJ cnpj = new CNPJ();
+                    PessoaService servicePessoa = new PessoaService(repositoryPessoa, senha, cpf, cnpj);
                     CriarContaController controllerCriarConta = new CriarContaController(servicePessoa);
 
                     controllerCriarConta.criarConta(sc);
                     break;
+
                 case 2:
                     ContaRepository repositoryConta = new ContaRepository();
                     PixRepository repositoryPix = new PixRepository();
                     TransacaoRepository repositoryTransacao = new TransacaoRepository();
 
-                    ContaService serviceConta = new ContaService(repositoryConta, repositoryPix);
                     LoginController controllerLogin = new LoginController(repositoryPessoa, senha);
 
                     Pessoa pessoa = controllerLogin.loginPessoa(sc);
 
-                    ContaController controllerConta = new ContaController(serviceConta, repositoryConta, repositoryTransacao);
+                    ContaService serviceConta = new ContaService(repositoryConta, repositoryPix, pessoa);
+                    ContaController controllerConta = new ContaController(serviceConta, repositoryConta, repositoryTransacao, cpf);
 
                     controllerConta.conta(sc, pessoa.getId_pessoa());
 
+                case 3:
+                    System.out.println("Programa finalizado:");
+                    sair = true;
+                    break;
+
+                default:
+                    System.out.println("\nOpção inválida!\n");
+                    break;
             }
-
-
         }while(!sair);
 
         sc.close();

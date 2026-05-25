@@ -1,14 +1,10 @@
 package model;
 
 public class CNPJ {
-    private final String cnpj;
-
-    public CNPJ(String cnpj){
+    public void confirmaCnpj(String cnpj){
         if(cnpj == null || !ehValido(cnpj.replaceAll("\\D", ""))){
             throw new IllegalArgumentException("CNPJ inválido");
         }
-
-        this.cnpj = cnpj.replaceAll("\\D", "");
     }
 
     public boolean ehValido(String cnpj){
@@ -52,10 +48,5 @@ public class CNPJ {
         }else{
             return 11 - restoDivisao;
         }
-    }
-
-    @Override
-    public String toString() {
-        return this.cnpj;
     }
 }

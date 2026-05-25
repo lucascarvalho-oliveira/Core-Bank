@@ -8,14 +8,15 @@ public class Transacao {
     private int id_transacao;
     private LocalDateTime data_hora;
     private double valor;
+    private double saldoConta;
     private TipoTransacao tipoTransacao;
 
     private Conta conta;
 
-    public Transacao(int id_transacao, LocalDateTime data_hora, double valor, TipoTransacao tipoTransacao, Conta conta) {
-        this.id_transacao = id_transacao;
+    public Transacao(LocalDateTime data_hora, double valor, double saldoConta, TipoTransacao tipoTransacao, Conta conta) {
         this.data_hora = data_hora;
         this.valor = valor;
+        this.saldoConta = saldoConta;
         this.tipoTransacao = tipoTransacao;
 
         this.conta = conta;
@@ -43,6 +44,14 @@ public class Transacao {
 
     public void setValor(double valor) {
         this.valor = valor;
+    }
+
+    public double getSaldoConta() {
+        return saldoConta;
+    }
+
+    public void setSaldoConta(double saldoConta) {
+        this.saldoConta = saldoConta;
     }
 
     public TipoTransacao getTipoTransacao() {

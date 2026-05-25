@@ -7,23 +7,19 @@ public class Senha {
            throw new IllegalArgumentException("ERRO! tamanho incorreto no mínimo 8 caracteres.");
        }
 
-       char primeiraLetra = senha.charAt(0);
-       if(!Character.isUpperCase(primeiraLetra)){
-           throw new IllegalArgumentException("ERRO! Primeira letra precisa ser maiúscula");
-       }
-
-       if(!validarSimbolos(senha)){
-           throw new IllegalArgumentException("ERRO! senha deve ter no mínimo um simbolo");
+       if(!validarSeguranca(senha)){
+           throw new IllegalArgumentException("ERRO! senha deve ter no mínimo um simbolo e uma maiúscula.");
        }
     }
 
-    public boolean validarSimbolos(String senha){
-        String simbolos = ".*[^a-zA-Z0-9].*";
+    public boolean validarSeguranca(String senha){
+        boolean temSimbolo = senha.matches(".*[^a-zA-Z0-9].*");
+        boolean temMaiuscula = senha.matches(".*[A-Z].*");
 
-        return senha.matches(simbolos) && senha.matches(".*/[A-Z]/.*");
+        return temSimbolo && temMaiuscula;
     }
 
     public boolean validarSenha(Pessoa pessoa, String senhaDigitada){
-        return pessoa.getSenha().equals(senhaDigitada);
+        return senhaDigitada.equals(pessoa.getSenha());
     }
 }
