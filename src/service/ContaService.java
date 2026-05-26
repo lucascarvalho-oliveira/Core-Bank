@@ -34,7 +34,7 @@ public class ContaService {
 
     public void depositar(Conta conta, double valor){
             if(valor <= 0){
-                throw new IllegalArgumentException("Valor incorreto para deposito");
+                throw new IllegalArgumentException("Valor incorreto para deposito.");
             }
 
             conta.setSaldo(conta.getSaldo() + valor);
@@ -45,10 +45,13 @@ public class ContaService {
     public void sacar(Conta conta, double valor, boolean usarLimite){
         if(conta.getTipoConta() == TipoConta.CONTA_CORRENTE){
             if(valor <= 0){
-                throw new IllegalArgumentException("Valor incorreto para sacar");
+                throw new IllegalArgumentException("Valor incorreto para sacar.");
+            }
+            if(valor> conta.getSaldo()){
+                throw new IllegalArgumentException("saldo insuficiente.");
             }
             if(valor > conta.getSaldo() + conta.getLimite()){
-                throw new IllegalArgumentException("Saldo insuficiente para essa transação");
+                throw new IllegalArgumentException("Saldo insuficiente para essa transação.");
             }
 
             if(usarLimite){
@@ -69,10 +72,10 @@ public class ContaService {
         }
         if(conta.getTipoConta() == TipoConta.CONTA_POUPANCA){
             if(valor <= 0){
-                throw new IllegalArgumentException("Valor incorreto para sacar");
+                throw new IllegalArgumentException("Valor incorreto para sacar.");
             }
             if(valor > conta.getSaldo()){
-                throw new IllegalArgumentException("Saldo insuficiente para essa transação");
+                throw new IllegalArgumentException("Saldo insuficiente para essa transação.");
             }
 
             double sobra = conta.getSaldo() - valor;
@@ -86,13 +89,13 @@ public class ContaService {
         int idContaDestino = repositoryPix.buscarPix(chavePix);
 
         if(idContaDestino == -1){
-            throw new IllegalArgumentException("Chave pix não encontrada");
+            throw new IllegalArgumentException("Chave pix não encontrada.");
         }
 
         Conta contaDestino = repositoryConta.buscarContaIdConta(idContaDestino);
 
         if(contaDestino == null){
-            throw new IllegalArgumentException("Conta destino não encontrada");
+            throw new IllegalArgumentException("Conta destino não encontrada.");
         }
 
         sacar(contaOrigem, valor, usarLimite);

@@ -44,7 +44,6 @@ public class ContaRepository {
             stmt.setInt(2, conta.getId_conta());
 
             stmt.executeUpdate();
-            System.out.println("\nSaldo atualizado!");
         }catch (SQLException e){
             System.out.println("\nERRO! ao atualizar o saldo!\n");
         }

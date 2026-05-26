@@ -22,7 +22,7 @@ public class PixRepository {
                 if(rs.next()){
                     int idGerado = rs.getInt(1);
                     pix.setId_pix(idGerado);
-                    System.out.println("\nPix gerado com sucesso\n");
+                    System.out.println("Pix gerado com sucesso");
                 }
             }
         }catch (SQLException e){

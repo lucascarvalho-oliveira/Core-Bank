@@ -47,12 +47,13 @@ public class Main {
                     Pessoa pessoa = controllerLogin.loginPessoa(sc);
 
                     ContaService serviceConta = new ContaService(repositoryConta, repositoryPix, pessoa);
-                    ContaController controllerConta = new ContaController(serviceConta, repositoryConta, repositoryTransacao, cpf);
+                    ContaController controllerConta = new ContaController(serviceConta, repositoryConta, repositoryTransacao, repositoryPix, cpf);
 
                     controllerConta.conta(sc, pessoa.getId_pessoa());
+                    break;
 
                 case 3:
-                    System.out.println("Programa finalizado:");
+                    System.out.println("\nPrograma finalizado!");
                     sair = true;
                     break;
 

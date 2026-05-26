@@ -5,6 +5,7 @@ import model.enums.TipoConta;
 import model.enums.TipoPix;
 import model.enums.TipoTransacao;
 import repository.ContaRepository;
+import repository.PixRepository;
 import repository.TransacaoRepository;
 import service.ContaService;
 
@@ -16,17 +17,18 @@ public class ContaController {
     private ContaService serviceConta;
     private ContaRepository repositoryConta;
     private TransacaoRepository repositoryTransacao;
+    private PixRepository repositoryPix;
     private CPF cpf;
 
-    public ContaController(ContaService serviceConta, ContaRepository repositoryConta, TransacaoRepository repositoryTransacao, CPF cpf){
+    public ContaController(ContaService serviceConta, ContaRepository repositoryConta, TransacaoRepository repositoryTransacao, PixRepository repositoryPix, CPF cpf){
         this.serviceConta = serviceConta;
         this.repositoryConta = repositoryConta;
         this.repositoryTransacao = repositoryTransacao;
+        this.repositoryPix = repositoryPix;
         this.cpf = cpf;
     }
 
     public void conta(Scanner sc, int id_pessoa){
-        boolean sair = false;
         do{
             Conta conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
 
@@ -40,7 +42,7 @@ public class ContaController {
                 case 1:
                     System.out.println("\nQual o tipo da conta que voce deseja criar:\n");
                     System.out.println("1 - Conta Corrente:");
-                    System.out.println("Ideal para movimentações do dia a dia.\n " +
+                    System.out.println("Ideal para movimentações do dia a dia.\n" +
                             "Possui limite de crédito para uso emergencial.\n");
 
                     System.out.println("2 - Conta Poupança:");
@@ -54,8 +56,11 @@ public class ContaController {
                     TipoConta tipoConta = null;
                     if(menuTipoConta == 1){
                         tipoConta = TipoConta.CONTA_CORRENTE;
-                    }else{
+                    }else if(menuTipoConta == 2){
                         tipoConta = TipoConta.CONTA_POUPANCA;
+                    }else{
+                        System.out.println("Opção invalida!");
+                        break;
                     }
 
                     System.out.println("\nCrie seu pix:");
@@ -92,14 +97,20 @@ public class ContaController {
                             break;
                     }
 
-                    Pix pix = new Pix(tipoPix, chave, serviceConta.criarConta(tipoConta));
-                    conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
-
+                    if(tipoPix != null && !chave.isBlank()) {
+                        Pix pix = new Pix(tipoPix, chave, serviceConta.criarConta(tipoConta));
+                        repositoryPix.salvarPix(pix);
+                        conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
+                    }else{
+                        System.out.println("ERRO! pix invalido");
+                        break;
+                    }
                     break;
 
                 case 2:
                     if(conta == null){
                         System.out.println("Você precisa criar um conta primeiro!");
+                        break;
                     }
 
                     repositoryTransacao.extrato(conta.getId_conta());
@@ -108,97 +119,133 @@ public class ContaController {
                 case 3:
                     if(conta == null){
                         System.out.println("Você precisa criar um conta primeiro!");
+                        break;
                     }
 
-                    System.out.println("\nQual a transação bancaria você deseja fazer:");
-                    System.out.println("Saldo em conta: R$ " + conta.getSaldo());
+                    boolean sairMenuConta = false;
+                    do {
+                        System.out.println("\nQual a transação bancaria você deseja fazer:");
+                        System.out.println("Saldo em conta: R$ " + conta.getSaldo());
 
-                    System.out.println("\n1 - Depositar:");
-                    System.out.println("2 - Sacar:");
-                    System.out.println("3 - Transferência via Pix:");
-                    int menuTransacao = sc.nextInt();sc.nextLine();
+                        System.out.println("\n1 - Depositar:");
+                        System.out.println("2 - Sacar:");
+                        System.out.println("3 - Transferência via Pix:");
+                        System.out.println("4 - voltar:");
+                        int menuTransacao = sc.nextInt();
+                        sc.nextLine();
 
-                    try {
                         switch (menuTransacao) {
                             case 1:
                                 System.out.println("\nInforme o valor do deposito:");
                                 double valorDeposito = sc.nextDouble();sc.nextLine();
 
-                                serviceConta.depositar(conta, valorDeposito);
+                                try {
+                                    serviceConta.depositar(conta, valorDeposito);
 
-                                Transacao transacaoDepositar = new Transacao(LocalDateTime.now(), valorDeposito, conta.getSaldo(), TipoTransacao.DEPOSITO, conta);
-                                repositoryTransacao.salvarTransacao(transacaoDepositar);
+                                    Transacao transacaoDepositar = new Transacao(LocalDateTime.now(), valorDeposito, conta.getSaldo(), TipoTransacao.DEPOSITO, conta);
+
+                                    repositoryTransacao.salvarTransacao(transacaoDepositar);
+
+                                }catch (IllegalArgumentException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                                System.out.println("\nSaldo atualizado!");
                                 break;
 
                             case 2:
                                 System.out.println("\nInforme o valor do saque:");
-                                double valorSaque = sc.nextDouble();sc.nextLine();
+                                double valorSaque = sc.nextDouble();
+                                sc.nextLine();
 
-                                if(conta.getTipoConta() == TipoConta.CONTA_CORRENTE && valorSaque > conta.getSaldo()){
-                                    System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
-                                    System.out.println("Limite de crédito: R$ " + conta.getLimite());
-                                    System.out.println("1 - Sim | 2 - Não");
-                                    int menuLimite = sc.nextInt(); sc.nextLine();
-
-                                    if(menuLimite == 1){
-                                        serviceConta.sacar(conta, valorSaque, true);
-
-                                        Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
-                                        repositoryTransacao.salvarTransacao(transacaoSacar);
-                                    }else{
-                                        System.out.println("\nSaldo insuficiente para essa transação.\n");
-                                    }
-                                }
-                                if(valorSaque <= conta.getSaldo()) {
+                                try{
                                     serviceConta.sacar(conta, valorSaque, false);
 
                                     Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
                                     repositoryTransacao.salvarTransacao(transacaoSacar);
+
+                                }catch (IllegalArgumentException e) {
+                                    if(e.getMessage().equals("saldo insuficiente.")){
+                                        System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
+                                        System.out.println("Limite de crédito: R$ " + conta.getLimite());
+                                        System.out.println("1 - Sim | 2 - Não");
+                                        int menuLimite = sc.nextInt();
+
+                                        if (menuLimite == 1) {
+                                            try {
+                                                serviceConta.sacar(conta, valorSaque, true);
+
+                                                Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
+                                                repositoryTransacao.salvarTransacao(transacaoSacar);
+
+                                            }catch (IllegalArgumentException ex) {
+                                                System.out.println(ex.getMessage());
+                                            }
+                                        } else {
+                                            System.out.println(e.getMessage());
+                                        }
+                                    }
                                 }
+                                System.out.println("\nSaldo atualizado!");
                                 break;
 
                             case 3:
                                 System.out.println("\nInforme o valor da transferência:");
-                                double valorTransferencia = sc.nextDouble();sc.nextLine();
+                                double valorTransferencia = sc.nextDouble();
+                                sc.nextLine();
                                 System.out.println("Informe a chave pix:");
                                 String chavePix = sc.nextLine();
 
-                                if(conta.getTipoConta() == TipoConta.CONTA_CORRENTE && valorTransferencia > conta.getSaldo()) {
-                                    System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
-                                    System.out.println("Limite de crédito: R$ " + conta.getLimite());
-                                    System.out.println("1 - Sim | 2 - Não");
-                                    int menuLimite = sc.nextInt();sc.nextLine();
-
-                                    if (menuLimite == 1) {
-                                        serviceConta.transferir(conta, valorTransferencia, true, chavePix);
-
-                                        Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
-                                        repositoryTransacao.salvarTransacao(transacaoTransferencia);
-                                    } else {
-                                        System.out.println("\nSaldo insuficiente para essa transação.\n");
-                                    }
-                                }
-                                if(valorTransferencia <= conta.getSaldo()) {
+                                try{
                                     serviceConta.transferir(conta, valorTransferencia, false, chavePix);
 
                                     Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
                                     repositoryTransacao.salvarTransacao(transacaoTransferencia);
+
+                                }catch (IllegalArgumentException e){
+                                    if(e.getMessage().equals("saldo insuficiente.")){
+                                        System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
+                                        System.out.println("Limite de crédito: R$ " + conta.getLimite());
+                                        System.out.println("1 - Sim | 2 - Não");
+                                        int menuLimite = sc.nextInt();
+                                        sc.nextLine();
+
+                                        if (menuLimite == 1) {
+                                            try {
+                                                serviceConta.transferir(conta, valorTransferencia, true, chavePix);
+
+                                                Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
+                                                repositoryTransacao.salvarTransacao(transacaoTransferencia);
+
+                                            }catch (IllegalArgumentException ex) {
+                                                System.out.println(ex.getMessage());
+                                            }
+                                        }else{
+                                            System.out.println(e.getMessage());
+                                        }
+                                    }
                                 }
+                                System.out.println("\nTransferência bem sucedida!");
                                 break;
 
                             case 4:
-                                sair = true;
+                                sairMenuConta = true;
                                 break;
 
                             default:
                                 System.out.println("\nOpção inválida!\n");
                                 break;
                         }
-                    }catch (IllegalArgumentException e){
-                        e.printStackTrace();
-                    }
-            }
+                    }while (!sairMenuConta);
+                    break;
 
-        }while(!sair);
+                case 4:
+                    System.out.println();
+                    return;
+
+                default:
+                    System.out.println("\nOpção inválida!\n");
+                    break;
+            }
+        }while(true);
     }
 }
