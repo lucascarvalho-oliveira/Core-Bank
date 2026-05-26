@@ -2,20 +2,15 @@ package model;
 
 import model.enums.TipoConta;
 
-public class Conta {
+public abstract class Conta {
     private int id_conta;
-    private double saldo;
-    private double limite;
-    private TipoConta tipoConta;
+    protected double saldo;
 
-    private Pessoa pessoa;
+    protected Pessoa pessoa;
 
     public Conta(){}
 
-    public Conta(double saldo, TipoConta tipoConta, Pessoa pessoa) {
-        this.saldo = saldo;
-        this.tipoConta = tipoConta;
-
+    public Conta(Pessoa pessoa) {
         this.pessoa = pessoa;
     }
 
@@ -35,38 +30,12 @@ public class Conta {
         this.saldo = saldo;
     }
 
-    public TipoConta getTipoConta() {
-        return tipoConta;
-    }
-
-    public void setTipoConta(TipoConta tipoConta) {
-        this.tipoConta = tipoConta;
-    }
-
-    public double getLimite() {
-        return limite;
-    }
-
-    public void setLimite(double limite) {
-        this.limite = limite;
-    }
-
     public Pessoa getPessoa() {
         return pessoa;
     }
 
-    public void setPessoa(Pessoa pessoa) {
-        this.pessoa = pessoa;
-    }
+    public abstract TipoConta getTipoConta();
 
-    @Override
-    public String toString() {
-        return "Conta{" +
-                "id_conta=" + id_conta +
-                ", saldo=" + saldo +
-                ", tipoConta=" + tipoConta +
-                ", limite=" + limite +
-                ", pessoa=" + pessoa +
-                '}';
-    }
+    public abstract void sacar(double valor);
+
 }
