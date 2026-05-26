@@ -2,6 +2,8 @@ package repository;
 
 import database.Conexao;
 import model.Conta;
+import model.ContaCorrente;
+import model.ContaPoupanca;
 import model.Pessoa;
 import model.enums.TipoConta;
 
@@ -15,7 +17,13 @@ public class ContaRepository {
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ){
             stmt.setDouble(1, conta.getSaldo());
-            stmt.setDouble(2, conta.getLimite());
+
+            double limiteBanco = 0.0;
+            if(conta instanceof ContaCorrente){
+                limiteBanco = ((ContaCorrente) conta).getLimite();
+            }
+
+            stmt.setDouble(2, limiteBanco);
             stmt.setString(3, conta.getTipoConta().name());
             stmt.setInt(4, conta.getPessoa().getId_pessoa());
 
@@ -60,12 +68,22 @@ public class ContaRepository {
             ResultSet rs = stmt.executeQuery();
 
             if(rs.next()){
-                Conta conta = new Conta();
+                String tipoContaBanco = rs.getString("tipo_conta");
+                TipoConta tipoConta = TipoConta.valueOf(tipoContaBanco);
+
+                Conta conta;
+
+                if(tipoConta == TipoConta.CONTA_CORRENTE){
+                    ContaCorrente cc = new ContaCorrente();
+                    cc.setLimite(rs.getDouble("limite"));
+                    conta = cc;
+                }else{
+                    ContaPoupanca cp = new ContaPoupanca();
+                    conta = cp;
+                }
+
                 conta.setId_conta(rs.getInt("id_conta"));
                 conta.setSaldo(rs.getDouble("saldo"));
-                conta.setTipoConta(TipoConta.valueOf(rs.getString("tipo_conta")));
-                conta.setLimite(rs.getDouble("limite"));
-
                 return conta;
             }
         }catch (SQLException e){
@@ -85,11 +103,22 @@ public class ContaRepository {
             ResultSet rs = stmt.executeQuery();
 
             if(rs.next()){
-                Conta conta = new Conta();
+                String TipoContaBanco = rs.getString("tipo_conta");
+                TipoConta tipoConta = TipoConta.valueOf(TipoContaBanco);
+
+                Conta conta;
+
+                if(tipoConta == TipoConta.CONTA_CORRENTE){
+                    ContaCorrente cc = new ContaCorrente();
+                    cc.setLimite(rs.getDouble("limite"));
+                    conta = cc;
+                }else{
+                    ContaPoupanca cp = new ContaPoupanca();
+                    conta = cp;
+                }
+
                 conta.setId_conta(rs.getInt("id_conta"));
                 conta.setSaldo(rs.getDouble("saldo"));
-                conta.setTipoConta(TipoConta.valueOf(rs.getString("tipo_conta")));
-                conta.setLimite(rs.getDouble("limite"));
 
                 return conta;
             }

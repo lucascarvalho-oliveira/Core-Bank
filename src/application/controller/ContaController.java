@@ -158,32 +158,13 @@ public class ContaController {
                                 sc.nextLine();
 
                                 try{
-                                    serviceConta.sacar(conta, valorSaque, false);
+                                    serviceConta.sacar(conta, valorSaque);
 
                                     Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
                                     repositoryTransacao.salvarTransacao(transacaoSacar);
 
                                 }catch (IllegalArgumentException e) {
-                                    if(e.getMessage().equals("saldo insuficiente.")){
-                                        System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
-                                        System.out.println("Limite de crédito: R$ " + conta.getLimite());
-                                        System.out.println("1 - Sim | 2 - Não");
-                                        int menuLimite = sc.nextInt();
-
-                                        if (menuLimite == 1) {
-                                            try {
-                                                serviceConta.sacar(conta, valorSaque, true);
-
-                                                Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
-                                                repositoryTransacao.salvarTransacao(transacaoSacar);
-
-                                            }catch (IllegalArgumentException ex) {
-                                                System.out.println(ex.getMessage());
-                                            }
-                                        } else {
-                                            System.out.println(e.getMessage());
-                                        }
-                                    }
+                                    System.out.println(e.getMessage());
                                 }
                                 System.out.println("\nSaldo atualizado!");
                                 break;
@@ -196,33 +177,13 @@ public class ContaController {
                                 String chavePix = sc.nextLine();
 
                                 try{
-                                    serviceConta.transferir(conta, valorTransferencia, false, chavePix);
+                                    serviceConta.transferir(conta, valorTransferencia, chavePix);
 
                                     Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
                                     repositoryTransacao.salvarTransacao(transacaoTransferencia);
 
                                 }catch (IllegalArgumentException e){
-                                    if(e.getMessage().equals("saldo insuficiente.")){
-                                        System.out.println("\nSaldo insuficiente para realizar esta transação. Deseja utilizar o limite de crédito? Ao utilizar o limite, será aplicada uma taxa adicional de 20%.");
-                                        System.out.println("Limite de crédito: R$ " + conta.getLimite());
-                                        System.out.println("1 - Sim | 2 - Não");
-                                        int menuLimite = sc.nextInt();
-                                        sc.nextLine();
-
-                                        if (menuLimite == 1) {
-                                            try {
-                                                serviceConta.transferir(conta, valorTransferencia, true, chavePix);
-
-                                                Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
-                                                repositoryTransacao.salvarTransacao(transacaoTransferencia);
-
-                                            }catch (IllegalArgumentException ex) {
-                                                System.out.println(ex.getMessage());
-                                            }
-                                        }else{
-                                            System.out.println(e.getMessage());
-                                        }
-                                    }
+                                    System.out.println(e.getMessage());
                                 }
                                 System.out.println("\nTransferência bem sucedida!");
                                 break;

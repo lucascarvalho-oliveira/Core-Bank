@@ -1,6 +1,8 @@
 package service;
 
 import model.Conta;
+import model.ContaCorrente;
+import model.ContaPoupanca;
 import model.Pessoa;
 import model.enums.TipoConta;
 import repository.ContaRepository;
@@ -18,13 +20,14 @@ public class ContaService {
     }
 
     public Conta criarConta(TipoConta tipoConta){
-        Conta conta = new Conta();
-
-        conta.setTipoConta(tipoConta);
-        conta.setPessoa(pessoa);
+        Conta conta;
 
         if(tipoConta == TipoConta.CONTA_CORRENTE){
-            conta.setLimite(500);
+            ContaCorrente cc = new ContaCorrente();
+            conta = cc;
+        }else{
+            ContaPoupanca cp = new ContaPoupanca();
+            conta = cp;
         }
 
         repositoryConta.salvarConta(conta);
@@ -42,50 +45,12 @@ public class ContaService {
             repositoryConta.atualizarSaldo(conta);
     }
 
-    public void sacar(Conta conta, double valor, boolean usarLimite){
-        if(conta.getTipoConta() == TipoConta.CONTA_CORRENTE){
-            if(valor <= 0){
-                throw new IllegalArgumentException("Valor incorreto para sacar.");
-            }
-            if(valor> conta.getSaldo()){
-                throw new IllegalArgumentException("saldo insuficiente.");
-            }
-            if(valor > conta.getSaldo() + conta.getLimite()){
-                throw new IllegalArgumentException("Saldo insuficiente para essa transação.");
-            }
-
-            if(usarLimite){
-                double sobra = conta.getSaldo() - valor;
-                double soma = sobra + conta.getLimite();
-
-                double valorUsadoLimite = Math.abs(sobra);
-                double taxa = valorUsadoLimite * 0.2;
-
-                conta.setSaldo(sobra - taxa);
-            }
-
-            if(valor <= conta.getSaldo()){
-                double sobra = conta.getSaldo() - valor;
-
-                conta.setSaldo(sobra);
-            }
-        }
-        if(conta.getTipoConta() == TipoConta.CONTA_POUPANCA){
-            if(valor <= 0){
-                throw new IllegalArgumentException("Valor incorreto para sacar.");
-            }
-            if(valor > conta.getSaldo()){
-                throw new IllegalArgumentException("Saldo insuficiente para essa transação.");
-            }
-
-            double sobra = conta.getSaldo() - valor;
-
-            conta.setSaldo(sobra);
-        }
-            repositoryConta.atualizarSaldo(conta);
+    public void sacar(Conta conta, double valor){
+        conta.sacar(valor);
+        repositoryConta.atualizarSaldo(conta);
     }
 
-    public void transferir(Conta contaOrigem, double valor, boolean usarLimite, String chavePix){
+    public void transferir(Conta contaOrigem, double valor, String chavePix){
         int idContaDestino = repositoryPix.buscarPix(chavePix);
 
         if(idContaDestino == -1){
@@ -98,7 +63,7 @@ public class ContaService {
             throw new IllegalArgumentException("Conta destino não encontrada.");
         }
 
-        sacar(contaOrigem, valor, usarLimite);
+        sacar(contaOrigem, valor);
 
         depositar(contaDestino, valor);
     }
