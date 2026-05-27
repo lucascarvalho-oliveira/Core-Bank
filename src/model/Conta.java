@@ -6,7 +6,7 @@ public abstract class Conta {
     private int id_conta;
     protected double saldo;
 
-    protected Pessoa pessoa;
+    private Pessoa pessoa;
 
     public Conta(){}
 
@@ -26,7 +26,7 @@ public abstract class Conta {
         return saldo;
     }
 
-    public void setSaldo(double saldo) {
+    protected void setSaldo(double saldo) {
         this.saldo = saldo;
     }
 
