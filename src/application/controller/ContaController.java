@@ -153,6 +153,9 @@ public class ContaController {
                                 break;
 
                             case 2:
+                                if(conta.getTipoConta() == TipoConta.CONTA_CORRENTE) {
+                                    System.out.println("\nvalor do cheque especial disponível: R$ " + conta.getLimite());
+                                }
                                 System.out.println("\nInforme o valor do saque:");
                                 double valorSaque = sc.nextDouble();
                                 sc.nextLine();

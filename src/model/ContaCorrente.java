@@ -9,11 +9,7 @@ public class ContaCorrente extends Conta{
 
     public ContaCorrente(double limite, Pessoa pessoa){
         super(pessoa);
-        this.limite = 500;
-    }
-
-    public double getLimite() {
-        return limite;
+        this.limite = limite;
     }
 
     public void setLimite(double limite) {
@@ -39,11 +35,17 @@ public class ContaCorrente extends Conta{
         if(valor <= saldo) {
             saldo -= valor;
         }else{
+            System.out.println("Saldo insuficiente para essa transação. O sistema utilizará o Limite do cheque especial disponível, aplicando uma taxa de 20% sobre o valor utilizado.");
             double sobra = saldo - valor;
             double valorUsadoLimite = Math.abs(sobra);
             double taxa = valorUsadoLimite * 0.2;
 
             saldo = sobra - taxa;
         }
+    }
+
+    @Override
+    public double getLimite(){
+        return limite;
     }
 }

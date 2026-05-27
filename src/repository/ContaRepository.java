@@ -17,13 +17,7 @@ public class ContaRepository {
             PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)
         ){
             stmt.setDouble(1, conta.getSaldo());
-
-            double limiteBanco = 0.0;
-            if(conta instanceof ContaCorrente){
-                limiteBanco = ((ContaCorrente) conta).getLimite();
-            }
-
-            stmt.setDouble(2, limiteBanco);
+            stmt.setDouble(2, conta.getLimite());
             stmt.setString(3, conta.getTipoConta().name());
             stmt.setInt(4, conta.getPessoa().getId_pessoa());
 

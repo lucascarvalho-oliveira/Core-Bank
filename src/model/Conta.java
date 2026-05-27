@@ -38,4 +38,6 @@ public abstract class Conta {
 
     public abstract void sacar(double valor);
 
+    public abstract double getLimite();
+
 }

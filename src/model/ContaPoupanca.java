@@ -26,4 +26,9 @@ public class ContaPoupanca extends Conta{
 
         saldo -= valor;
     }
+
+    @Override
+    public double getLimite(){
+        return 0;
+    }
 }

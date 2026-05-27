@@ -23,10 +23,10 @@ public class ContaService {
         Conta conta;
 
         if(tipoConta == TipoConta.CONTA_CORRENTE){
-            ContaCorrente cc = new ContaCorrente();
+            ContaCorrente cc = new ContaCorrente(500, pessoa);
             conta = cc;
         }else{
-            ContaPoupanca cp = new ContaPoupanca();
+            ContaPoupanca cp = new ContaPoupanca(pessoa);
             conta = cp;
         }
 
