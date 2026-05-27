@@ -5,9 +5,9 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Conexao {
-    final private String URL = ;
-    final private String USER = ;
-    final private String PASSWORD = ;
+    final private String URL =  "jdbc:mysql://localhost:3306/db_CoreBank";
+    final private String USER = "root";
+    final private String PASSWORD = "Carvalho@ptc50";
 
     public Connection conectar(){
         try{
