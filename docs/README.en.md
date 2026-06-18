@@ -91,7 +91,7 @@ limite DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
 tipo_conta VARCHAR(15) NOT NULL,
 id_pessoa_fk INT,
 
-FOREIGN KEY(id_pessoa_fk) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
+FOREIGN KEY(id_pessoa_fk) REFERENCES pessoa(id_pessoa)
 );
 
 CREATE TABLE pix(
@@ -111,7 +111,16 @@ saldo_conta DECIMAL(15, 2) NOT NULL,
 tipo_transacao VARCHAR(45) NOT NULL,
 id_conta_fk INT,
 
-FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta) ON DELETE CASCADE
+FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta)
+);
+
+CREATE TABLE investimento(
+id_investimento INT PRIMARY KEY AUTO_INCREMENT,
+valor DECIMAL(15, 2) NOT NULL,
+data_hora DATETIME(0) NOT NULL,
+id_conta_fk INT,
+
+FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta)
 );
 ```
 

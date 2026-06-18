@@ -91,7 +91,7 @@ limite DECIMAL(15, 2) NOT NULL DEFAULT 0.00,
 tipo_conta VARCHAR(15) NOT NULL,
 id_pessoa_fk INT,
 
-FOREIGN KEY(id_pessoa_fk) REFERENCES pessoa(id_pessoa) ON DELETE CASCADE
+FOREIGN KEY(id_pessoa_fk) REFERENCES pessoa(id_pessoa)
 );
 
 CREATE TABLE pix(
