@@ -111,7 +111,16 @@ saldo_conta DECIMAL(15, 2) NOT NULL,
 tipo_transacao VARCHAR(45) NOT NULL,
 id_conta_fk INT,
 
-FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta) ON DELETE CASCADE
+FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta)
+);
+
+CREATE TABLE investimento(
+id_investimento INT PRIMARY KEY AUTO_INCREMENT,
+valor DECIMAL(15, 2) NOT NULL,
+data_hora DATETIME(0) NOT NULL,
+id_conta_fk INT,
+
+FOREIGN KEY(id_conta_fk) REFERENCES conta(id_conta)
 );
 ```
 
