@@ -11,15 +11,13 @@ import repository.PixRepository;
 public class ContaService {
     private ContaRepository repositoryConta;
     private PixRepository repositoryPix;
-    private Pessoa pessoa;
 
-    public ContaService(ContaRepository repositoryConta, PixRepository repositoryPix, Pessoa pessoa){
+    public ContaService(ContaRepository repositoryConta, PixRepository repositoryPix){
         this.repositoryConta = repositoryConta;
         this.repositoryPix = repositoryPix;
-        this.pessoa = pessoa;
     }
 
-    public Conta criarConta(TipoConta tipoConta){
+    public Conta criarConta(TipoConta tipoConta, Pessoa pessoa){
         Conta conta;
 
         if(tipoConta == TipoConta.CONTA_CORRENTE){

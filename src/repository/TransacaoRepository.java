@@ -18,19 +18,18 @@ public class TransacaoRepository {
             stmt.setDouble(2, transacao.getValor());
             stmt.setDouble(3, transacao.getConta().getSaldo());
             stmt.setString(4, transacao.getTipoTransacao().name());
-            stmt.setInt(5, transacao.getConta().getId_conta());
+            stmt.setInt(5, transacao.getConta().getIdConta());
 
             stmt.executeUpdate();
 
             try(ResultSet rs = stmt.getGeneratedKeys()){
                 if(rs.next()){
                     int idGerado = rs.getInt(1);
-                    transacao.setId_transacao(idGerado);
+                    transacao.setIdTransacao(idGerado);
                 }
             }
         }catch (SQLException e){
-            System.out.println("\nErro ao salvar transação.\n");
-            e.printStackTrace();
+            System.out.println("\nErro! ao salvar transação.\n" + e.getMessage());
         }
     }
 
@@ -60,7 +59,7 @@ public class TransacaoRepository {
                 System.out.println("Nenhum histórico encontrado para essa conta.");
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("\nERRO! no extrato.\n" + e.getMessage());
         }
     }
 }

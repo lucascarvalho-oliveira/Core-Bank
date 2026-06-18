@@ -4,7 +4,6 @@ import database.Conexao;
 import model.Conta;
 import model.ContaCorrente;
 import model.ContaPoupanca;
-import model.Pessoa;
 import model.enums.TipoConta;
 
 import java.sql.*;
@@ -19,20 +18,19 @@ public class ContaRepository {
             stmt.setDouble(1, conta.getSaldo());
             stmt.setDouble(2, conta.getLimite());
             stmt.setString(3, conta.getTipoConta().name());
-            stmt.setInt(4, conta.getPessoa().getId_pessoa());
+            stmt.setInt(4, conta.getPessoa().getIdPessoa());
 
             stmt.executeUpdate();
 
             try(ResultSet rs = stmt.getGeneratedKeys()){
                 if(rs.next()){
                     int idGerado = rs.getInt(1);
-                    conta.setId_conta(idGerado);
-                    System.out.println("\nConta gerada com sucesso\n");
+                    conta.setIdConta(idGerado);
+                    System.out.println("\nConta gerada com sucesso.\n");
                 }
             }
         }catch (SQLException e){
-            System.out.println("\nErro ao salvar conta.\n");
-            e.printStackTrace();
+            System.out.println("\nErro! ao salvar conta.\n" + e.getMessage());
         }
     }
 
@@ -43,11 +41,11 @@ public class ContaRepository {
             PreparedStatement stmt = conn.prepareStatement(sql)
         ){
             stmt.setDouble(1, conta.getSaldo());
-            stmt.setInt(2, conta.getId_conta());
+            stmt.setInt(2, conta.getIdConta());
 
             stmt.executeUpdate();
         }catch (SQLException e){
-            System.out.println("\nERRO! ao atualizar o saldo!\n");
+            System.out.println("\nERRO! ao atualizar o saldo.\n" + e.getMessage());
         }
     }
 
@@ -76,12 +74,12 @@ public class ContaRepository {
                     conta = cp;
                 }
 
-                conta.setId_conta(rs.getInt("id_conta"));
+                conta.setIdConta(rs.getInt("id_conta"));
                 conta.setSaldo(rs.getDouble("saldo"));
                 return conta;
             }
         }catch (SQLException e){
-            e.printStackTrace();
+            System.out.println("ERRO! ao encontrar pessoa." + e.getMessage());
         }
         return null;
     }
@@ -111,14 +109,13 @@ public class ContaRepository {
                     conta = cp;
                 }
 
-                conta.setId_conta(rs.getInt("id_conta"));
+                conta.setIdConta(rs.getInt("id_conta"));
                 conta.setSaldo(rs.getDouble("saldo"));
 
                 return conta;
             }
         }catch (SQLException e){
-            System.out.println("Conta nao encontrada!");
-            e.printStackTrace();
+            System.out.println("ERRO! conta nao encontrada." + e.getMessage());
         }
         return null;
     }

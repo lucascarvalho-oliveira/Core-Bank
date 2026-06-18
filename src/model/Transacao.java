@@ -5,7 +5,7 @@ import model.enums.TipoTransacao;
 import java.time.LocalDateTime;
 
 public class Transacao {
-    private int id_transacao;
+    private int idTransacao;
     private LocalDateTime data_hora;
     private double valor;
     private double saldoConta;
@@ -22,12 +22,12 @@ public class Transacao {
         this.conta = conta;
     }
 
-    public int getId_transacao() {
-        return id_transacao;
+    public int getIdTransacao() {
+        return idTransacao;
     }
 
-    public void setId_transacao(int id_transacao) {
-        this.id_transacao = id_transacao;
+    public void setIdTransacao(int idTransacao) {
+        this.idTransacao = idTransacao;
     }
 
     public LocalDateTime getData_hora() {

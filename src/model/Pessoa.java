@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Pessoa {
-    private int id_pessoa;
+    private int idPessoa;
     private String nome;
     private TipoPessoa tipoPessoa;
     private String documento;
@@ -25,12 +25,12 @@ public class Pessoa {
         this.conta = new ArrayList<>();
     }
 
-    public int getId_pessoa() {
-        return id_pessoa;
+    public int getIdPessoa() {
+        return idPessoa;
     }
 
-    public void setId_pessoa(int id_pessoa) {
-        this.id_pessoa = id_pessoa;
+    public void setIdPessoa(int idPessoa) {
+        this.idPessoa = idPessoa;
     }
 
     public String getNome() {

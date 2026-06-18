@@ -2,126 +2,48 @@ package application.controller;
 
 import model.*;
 import model.enums.TipoConta;
-import model.enums.TipoPix;
 import model.enums.TipoTransacao;
 import repository.ContaRepository;
 import repository.PixRepository;
 import repository.TransacaoRepository;
 import service.ContaService;
+import service.InvestimentoService;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.Scanner;
 
 public class ContaController {
     private ContaService serviceConta;
     private ContaRepository repositoryConta;
-    private TransacaoRepository repositoryTransacao;
+    private InvestimentoService serviceInveste;
     private PixRepository repositoryPix;
-    private CPF cpf;
+    private TransacaoRepository repositoryTransacao;
 
-    public ContaController(ContaService serviceConta, ContaRepository repositoryConta, TransacaoRepository repositoryTransacao, PixRepository repositoryPix, CPF cpf){
+    public ContaController(ContaService serviceConta, ContaRepository repositoryConta, InvestimentoService serviceInveste, PixRepository repositoryPix, TransacaoRepository repositoryTransacao){
         this.serviceConta = serviceConta;
         this.repositoryConta = repositoryConta;
-        this.repositoryTransacao = repositoryTransacao;
+        this.serviceInveste = serviceInveste;
         this.repositoryPix = repositoryPix;
-        this.cpf = cpf;
+        this.repositoryTransacao = repositoryTransacao;
     }
 
     public void conta(Scanner sc, int id_pessoa){
         do{
             Conta conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
 
-            System.out.println("\n1 - Criar nova conta:");
+            if(conta == null){
+                System.out.println("Você precisa criar um conta primeiro!");
+                return;
+            }
+
+            System.out.println("\n1 - Transações Bancarias:");
             System.out.println("2 - Ver histórico:");
-            System.out.println("3 - Transações Bancarias:");
+            System.out.println("3 - Deletar Pix.");
             System.out.println("4 - Voltar:");
             int menu = sc.nextInt();sc.nextLine();
 
             switch (menu){
                 case 1:
-                    System.out.println("\nQual o tipo da conta que voce deseja criar:\n");
-                    System.out.println("1 - Conta Corrente:");
-                    System.out.println("Ideal para movimentações do dia a dia.\n" +
-                            "Possui limite de crédito para uso emergencial.\n");
-
-                    System.out.println("2 - Conta Poupança:");
-                    System.out.println("Ideal para guardar dinheiro.\n" +
-                            "Possui rendimento sobre o saldo disponível.\n");
-
-                    System.out.println("Coloque o numero da conta desejada:");
-
-                    int menuTipoConta = sc.nextInt();
-
-                    TipoConta tipoConta = null;
-                    if(menuTipoConta == 1){
-                        tipoConta = TipoConta.CONTA_CORRENTE;
-                    }else if(menuTipoConta == 2){
-                        tipoConta = TipoConta.CONTA_POUPANCA;
-                    }else{
-                        System.out.println("Opção invalida!");
-                        break;
-                    }
-
-                    System.out.println("\nCrie seu pix:");
-                    System.out.println("escolha a sua chave pix");
-                    System.out.println("1 - CPF");
-                    System.out.println("2 - Telefone:");
-                    System.out.println("3 - Email");
-                    int menuPix = sc.nextInt();sc.nextLine();
-
-                    TipoPix tipoPix = null;
-                    String chave = "";
-                    switch (menuPix){
-                        case 1:
-                            tipoPix = TipoPix.CPF;
-
-                            System.out.println("\nInforme o seu Cpf:");
-                            chave = sc.nextLine();
-                            cpf.confirmaCpf(chave);
-                            break;
-                        case 2:
-                            tipoPix = TipoPix.TELEFONE;
-
-                            System.out.println("\nInforme o seu telefone:");
-                            chave = sc.nextLine();
-                            break;
-                        case 3:
-                            tipoPix = TipoPix.EMAIL;
-
-                            System.out.println("\nInforme o seu email:");
-                            chave = sc.nextLine();
-                            break;
-                        default:
-                            System.out.println("\nOpção inválida!\n");
-                            break;
-                    }
-
-                    if(tipoPix != null && !chave.isBlank()) {
-                        Pix pix = new Pix(tipoPix, chave, serviceConta.criarConta(tipoConta));
-                        repositoryPix.salvarPix(pix);
-                        conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
-                    }else{
-                        System.out.println("ERRO! pix invalido");
-                        break;
-                    }
-                    break;
-
-                case 2:
-                    if(conta == null){
-                        System.out.println("Você precisa criar um conta primeiro!");
-                        break;
-                    }
-
-                    repositoryTransacao.extrato(conta.getId_conta());
-                    break;
-
-                case 3:
-                    if(conta == null){
-                        System.out.println("Você precisa criar um conta primeiro!");
-                        break;
-                    }
-
                     boolean sairMenuConta = false;
                     do {
                         System.out.println("\nQual a transação bancaria você deseja fazer:");
@@ -130,7 +52,8 @@ public class ContaController {
                         System.out.println("\n1 - Depositar:");
                         System.out.println("2 - Sacar:");
                         System.out.println("3 - Transferência via Pix:");
-                        System.out.println("4 - voltar:");
+                        System.out.println("4 - Fazer um investimento bancário.");
+                        System.out.println("5 - voltar:");
                         int menuTransacao = sc.nextInt();
                         sc.nextLine();
 
@@ -192,6 +115,26 @@ public class ContaController {
                                 break;
 
                             case 4:
+                                if(conta.getTipoConta() != TipoConta.CONTA_POUPANCA){
+                                    System.out.println("So pode fazer investimento em conta poupança");
+                                }
+
+                                System.out.println("Informe o valor do investimento");
+                                double valorInveste = sc.nextDouble();sc.nextLine();
+
+                                if(valorInveste <= 0){
+                                    System.out.println("Valor incorreto");
+                                    break;
+                                }
+
+                                Investimento investimento = new Investimento(valorInveste, LocalDateTime.now(), conta);
+                                serviceInveste.SalvarInvestimento(investimento, conta);
+
+                                Transacao transacaoInveste = new Transacao(LocalDateTime.now(), valorInveste, conta.getSaldo(), TipoTransacao.INVESTIMENTO, conta);
+                                repositoryTransacao.salvarTransacao(transacaoInveste);
+                                break;
+
+                            case 5:
                                 sairMenuConta = true;
                                 break;
 
@@ -200,6 +143,24 @@ public class ContaController {
                                 break;
                         }
                     }while (!sairMenuConta);
+                    break;
+
+                case 2:
+                    repositoryTransacao.extrato(conta.getIdConta());
+                    break;
+
+                case 3:
+                    System.out.println("\nTem certeza que deseja apagar o pix (s/n)");
+                    String escolha = sc.nextLine();
+
+                    if(escolha.equalsIgnoreCase("s")){
+                        System.out.println("\nInforme a chave pix.");
+                        String chave = sc.nextLine();
+
+                        repositoryPix.apagarPix(chave);
+                    }else{
+                        break;
+                    }
                     break;
 
                 case 4:

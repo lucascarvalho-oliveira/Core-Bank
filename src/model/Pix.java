@@ -3,7 +3,7 @@ package model;
 import model.enums.TipoPix;
 
 public class Pix {
-    private int id_pix;
+    private int idPix;
     private TipoPix tipoPix;
     private String chave;
 
@@ -16,12 +16,12 @@ public class Pix {
         this.conta = conta;
     }
 
-    public int getId_pix() {
-        return id_pix;
+    public int getIdPix() {
+        return idPix;
     }
 
-    public void setId_pix(int id_pix) {
-        this.id_pix = id_pix;
+    public void setIdPix(int idPix) {
+        this.idPix = idPix;
     }
 
     public String getChave() {

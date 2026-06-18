@@ -22,13 +22,12 @@ public class PessoaRepository {
             try(ResultSet rs = stmt.getGeneratedKeys()){
                 if(rs.next()){
                     int idGerado = rs.getInt(1);
-                    pessoa.setId_pessoa(idGerado);
-                    System.out.println("\nUsuário gerado com sucesso\n");
+                    pessoa.setIdPessoa(idGerado);
+                    System.out.println("\nUsuário gerado com sucesso.\n");
                 }
             }
         }catch (SQLException e){
-            System.out.println("\nErro ao salvar conta.\n");
-            e.printStackTrace();
+            System.out.println("\nErro! ao salvar conta.\n" + e.getMessage());
         }
     }
 
@@ -45,14 +44,13 @@ public class PessoaRepository {
             if(rs.next()){
                 Pessoa pessoa = new Pessoa();
 
-                pessoa.setId_pessoa(rs.getInt("id_pessoa"));
+                pessoa.setIdPessoa(rs.getInt("id_pessoa"));
                 pessoa.setSenha(rs.getString("senha"));
 
                 return  pessoa;
             }
         }catch (SQLException e){
-            System.out.println("Pessoa nao encontrada!");
-            e.printStackTrace();
+            System.out.println("\nERRO! pessoa nao encontrada.\n" + e.getMessage());
         }
         return null;
     }
