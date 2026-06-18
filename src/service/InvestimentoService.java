@@ -5,18 +5,26 @@ import model.Conta;
 import model.Investimento;
 import repository.InvestimentoRepository;
 
+import java.time.LocalDateTime;
+
 public class InvestimentoService {
     private InvestimentoRepository repositoryInveste;
+    private ContaService serviceConta;
 
-    public InvestimentoService(InvestimentoRepository repositoryInveste){
+    public InvestimentoService(InvestimentoRepository repositoryInveste, ContaService serviceConta){
         this.repositoryInveste = repositoryInveste;
+        this.serviceConta = serviceConta;
     }
 
-    public void SalvarInvestimento(Investimento investe, Conta conta){
-        if(investe.getValor() > conta.getSaldo()){
+    public void SalvarInvestimento(double valorInveste, Conta conta){
+        if(valorInveste > conta.getSaldo()){
             throw new IllegalArgumentException("Saldo em conta insuficiente.");
         }
 
-        repositoryInveste.salvarInvestimento(investe);
+        Investimento investimento = new Investimento(valorInveste, LocalDateTime.now(), conta);
+
+        serviceConta.sacar(conta, valorInveste);
+
+        repositoryInveste.salvarInvestimento(investimento);
     }
 }

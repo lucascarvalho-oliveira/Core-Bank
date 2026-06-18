@@ -33,7 +33,7 @@ public class Main {
 
         // Investimento
         InvestimentoRepository repositoryInveste = new InvestimentoRepository();
-        InvestimentoService serviceInveste = new InvestimentoService(repositoryInveste);
+        InvestimentoService serviceInveste = new InvestimentoService(repositoryInveste, serviceConta);
 
         // Transação.
         TransacaoRepository repositoryTransacao = new TransacaoRepository();

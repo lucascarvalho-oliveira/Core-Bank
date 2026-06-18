@@ -127,8 +127,7 @@ public class ContaController {
                                     break;
                                 }
 
-                                Investimento investimento = new Investimento(valorInveste, LocalDateTime.now(), conta);
-                                serviceInveste.SalvarInvestimento(investimento, conta);
+                                serviceInveste.SalvarInvestimento(valorInveste, conta);
 
                                 Transacao transacaoInveste = new Transacao(LocalDateTime.now(), valorInveste, conta.getSaldo(), TipoTransacao.INVESTIMENTO, conta);
                                 repositoryTransacao.salvarTransacao(transacaoInveste);

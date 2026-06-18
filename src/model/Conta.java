@@ -3,7 +3,7 @@ package model;
 import model.enums.TipoConta;
 
 public abstract class Conta {
-    private int id_conta;
+    private int idConta;
     protected double saldo;
 
     private Pessoa pessoa;
@@ -14,19 +14,19 @@ public abstract class Conta {
         this.pessoa = pessoa;
     }
 
-    public int getId_conta() {
-        return id_conta;
+    public int getIdConta() {
+        return idConta;
     }
 
-    public void setId_conta(int id_conta) {
-        this.id_conta = id_conta;
+    public void setIdConta(int idConta) {
+        this.idConta = idConta;
     }
 
     public double getSaldo() {
         return saldo;
     }
 
-    protected void setSaldo(double saldo) {
+    public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
 

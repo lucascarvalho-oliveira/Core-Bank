@@ -6,14 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ContaPoupanca extends Conta{
-    List<Investimento> investimentos;
 
     public ContaPoupanca(){}
 
     public ContaPoupanca(Pessoa pessoa){
         super(pessoa);
-
-        this.investimentos = new ArrayList<>();
     }
 
     @Override
