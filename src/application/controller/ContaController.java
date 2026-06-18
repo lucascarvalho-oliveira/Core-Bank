@@ -10,6 +10,7 @@ import service.ContaService;
 import service.InvestimentoService;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Scanner;
 
 public class ContaController {
@@ -29,12 +30,25 @@ public class ContaController {
 
     public void conta(Scanner sc, int id_pessoa){
         do{
-            Conta conta = repositoryConta.buscarContaIdPessoa(id_pessoa);
+            List<Conta> contaEncontrada = repositoryConta.buscarContaIdPessoa(id_pessoa);
 
-            if(conta == null){
-                System.out.println("Você precisa criar um conta primeiro!");
+            if(contaEncontrada.isEmpty()){
+                System.out.println("Você não possui contas cadastradas.");
                 return;
             }
+
+            System.out.println("\nQual conta deseja realizar a operação.");
+            for(int i = 0; i < contaEncontrada.size(); i++){
+                System.out.println(i + 1 + " - " + contaEncontrada.get(i).getTipoConta() + " numero conta: "+ contaEncontrada.get(i).getIdConta());
+            }
+            int escolhido = sc.nextInt();sc.nextLine();
+
+            if(escolhido <= 0 || escolhido > contaEncontrada.size()){
+                System.out.println("Valor incorreto.");
+                return;
+            }
+
+            Conta conta = contaEncontrada.get(escolhido - 1);
 
             System.out.println("\n1 - Transações Bancarias:");
             System.out.println("2 - Ver histórico:");

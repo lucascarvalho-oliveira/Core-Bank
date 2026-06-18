@@ -7,6 +7,8 @@ import model.ContaPoupanca;
 import model.enums.TipoConta;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContaRepository {
     public void salvarConta(Conta conta){
@@ -49,8 +51,10 @@ public class ContaRepository {
         }
     }
 
-    public Conta buscarContaIdPessoa(int id_pessoa){
+    public List<Conta> buscarContaIdPessoa(int id_pessoa){
         String sql = "SELECT * FROM conta WHERE id_pessoa_fk = ?";
+
+        List<Conta> contas = new ArrayList<>();
 
         try(Connection conn = new Conexao().conectar();
             PreparedStatement stmt = conn.prepareStatement(sql);
@@ -59,7 +63,7 @@ public class ContaRepository {
 
             ResultSet rs = stmt.executeQuery();
 
-            if(rs.next()){
+            while(rs.next()){
                 String tipoContaBanco = rs.getString("tipo_conta");
                 TipoConta tipoConta = TipoConta.valueOf(tipoContaBanco);
 
@@ -76,12 +80,13 @@ public class ContaRepository {
 
                 conta.setIdConta(rs.getInt("id_conta"));
                 conta.setSaldo(rs.getDouble("saldo"));
-                return conta;
+
+                contas.add(conta);
             }
         }catch (SQLException e){
             System.out.println("ERRO! ao encontrar pessoa." + e.getMessage());
         }
-        return null;
+        return contas;
     }
 
     public Conta buscarContaIdConta(int id_conta){
