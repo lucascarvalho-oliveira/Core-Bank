@@ -2,6 +2,7 @@ package repository;
 
 import database.Conexao;
 import model.Pix;
+import model.enums.TipoPix;
 
 import java.sql.*;
 
@@ -49,6 +50,26 @@ public class PixRepository {
         }
 
         return idGerado;
+    }
+
+    public void updateChave(String chavePix, TipoPix tipoPix, String novaChave){
+        String sql = "UPDATE pix SET chavePix = ?, TipoPix = ? WHERE chavePix = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ){
+            stmt.setString(1, chavePix);
+            stmt.setString(2, tipoPix.name());
+            stmt.setString(3, novaChave);
+
+            int linhaAfetada = stmt.executeUpdate();
+
+            if(linhaAfetada > 0){
+                System.out.println("\nChave atualizada com sucesso.");
+            }
+        }catch (SQLException e){
+            System.out.println("\nErro! ao atualizar chave pix.\n" + e.getMessage());
+        }
     }
 
     public void apagarPix(String chavePix){

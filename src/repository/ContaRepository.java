@@ -61,30 +61,31 @@ public class ContaRepository {
         ){
             stmt.setInt(1, id_pessoa);
 
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()) {
 
-            while(rs.next()){
-                String tipoContaBanco = rs.getString("tipo_conta");
-                TipoConta tipoConta = TipoConta.valueOf(tipoContaBanco);
+                while (rs.next()) {
+                    String tipoContaBanco = rs.getString("tipo_conta");
+                    TipoConta tipoConta = TipoConta.valueOf(tipoContaBanco);
 
-                Conta conta;
+                    Conta conta;
 
-                if(tipoConta == TipoConta.CONTA_CORRENTE){
-                    ContaCorrente cc = new ContaCorrente();
-                    cc.setLimite(rs.getDouble("limite"));
-                    conta = cc;
-                }else{
-                    ContaPoupanca cp = new ContaPoupanca();
-                    conta = cp;
+                    if (tipoConta == TipoConta.CONTA_CORRENTE) {
+                        ContaCorrente cc = new ContaCorrente();
+                        cc.setLimite(rs.getDouble("limite"));
+                        conta = cc;
+                    } else {
+                        ContaPoupanca cp = new ContaPoupanca();
+                        conta = cp;
+                    }
+
+                    conta.setIdConta(rs.getInt("id_conta"));
+                    conta.setSaldo(rs.getDouble("saldo"));
+
+                    contas.add(conta);
                 }
-
-                conta.setIdConta(rs.getInt("id_conta"));
-                conta.setSaldo(rs.getDouble("saldo"));
-
-                contas.add(conta);
             }
         }catch (SQLException e){
-            System.out.println("ERRO! ao encontrar pessoa." + e.getMessage());
+            System.out.println("\nERRO! ao encontrar pessoa.\n" + e.getMessage());
         }
         return contas;
     }
@@ -97,31 +98,51 @@ public class ContaRepository {
         ){
             stmt.setInt(1, id_conta);
 
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()) {
 
-            if(rs.next()){
-                String TipoContaBanco = rs.getString("tipo_conta");
-                TipoConta tipoConta = TipoConta.valueOf(TipoContaBanco);
+                if (rs.next()) {
+                    String TipoContaBanco = rs.getString("tipo_conta");
+                    TipoConta tipoConta = TipoConta.valueOf(TipoContaBanco);
 
-                Conta conta;
+                    Conta conta;
 
-                if(tipoConta == TipoConta.CONTA_CORRENTE){
-                    ContaCorrente cc = new ContaCorrente();
-                    cc.setLimite(rs.getDouble("limite"));
-                    conta = cc;
-                }else{
-                    ContaPoupanca cp = new ContaPoupanca();
-                    conta = cp;
+                    if (tipoConta == TipoConta.CONTA_CORRENTE) {
+                        ContaCorrente cc = new ContaCorrente();
+                        cc.setLimite(rs.getDouble("limite"));
+                        conta = cc;
+                    } else {
+                        ContaPoupanca cp = new ContaPoupanca();
+                        conta = cp;
+                    }
+
+                    conta.setIdConta(rs.getInt("id_conta"));
+                    conta.setSaldo(rs.getDouble("saldo"));
+
+                    return conta;
                 }
-
-                conta.setIdConta(rs.getInt("id_conta"));
-                conta.setSaldo(rs.getDouble("saldo"));
-
-                return conta;
             }
         }catch (SQLException e){
-            System.out.println("ERRO! conta nao encontrada." + e.getMessage());
+            System.out.println("\nERRO! conta nao encontrada.\n" + e.getMessage());
         }
         return null;
+    }
+
+    public void apagarConta(Conta conta){
+        String sql = "DELETE FROM conta WHERE id_conta = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ){
+            stmt.setInt(1, conta.getIdConta());
+
+            int linhaAfetada = stmt.executeUpdate();
+
+            if(linhaAfetada > 0){
+                System.out.println("\nConta deletada com sucesso.");
+            }
+
+        }catch (SQLException e){
+            System.out.println("\nERRO! ao deletar conta.\n" + e.getMessage());
+        }
     }
 }

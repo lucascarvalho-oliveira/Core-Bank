@@ -13,6 +13,8 @@ public class Transacao {
 
     private Conta conta;
 
+    public Transacao(){}
+
     public Transacao(LocalDateTime data_hora, double valor, double saldoConta, TipoTransacao tipoTransacao, Conta conta) {
         this.data_hora = data_hora;
         this.valor = valor;

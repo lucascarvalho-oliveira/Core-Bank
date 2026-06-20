@@ -10,6 +10,8 @@ public class Investimento {
 
     private Conta conta;
 
+    public Investimento() {}
+
     public Investimento(double valor, LocalDateTime dataAplicacao, Conta conta) {
         this.valor = valor;
         this.dataAplicacao = dataAplicacao;

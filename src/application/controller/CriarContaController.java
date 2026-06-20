@@ -30,7 +30,7 @@ public class CriarContaController {
 
     public void criarConta(Scanner sc){
         do{
-            System.out.println("1 - Cadastrar pessoa.");
+            System.out.println("1 - Cadastrar cooperado.");
             System.out.println("2 - Criar conta.");
             System.out.println("3 - voltar ao menu anterior.");
             System.out.println("Escolha uma das opções.");

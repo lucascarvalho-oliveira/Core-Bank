@@ -2,35 +2,35 @@ package application.controller;
 
 import model.*;
 import model.enums.TipoConta;
+import model.enums.TipoPix;
 import model.enums.TipoTransacao;
 import repository.ContaRepository;
 import repository.PixRepository;
-import repository.TransacaoRepository;
 import service.ContaService;
-import service.InvestimentoService;
+import service.TransacaoService;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Scanner;
 
-public class ContaController {
+public class ContaPixController {
     private ContaService serviceConta;
     private ContaRepository repositoryConta;
-    private InvestimentoService serviceInveste;
     private PixRepository repositoryPix;
-    private TransacaoRepository repositoryTransacao;
+    private TransacaoService serviceTransacao;
+    private CPF cpf;
 
-    public ContaController(ContaService serviceConta, ContaRepository repositoryConta, InvestimentoService serviceInveste, PixRepository repositoryPix, TransacaoRepository repositoryTransacao){
+    public ContaPixController(ContaService serviceConta, ContaRepository repositoryConta, PixRepository repositoryPix, TransacaoService serviceTransacao, CPF cpf){
         this.serviceConta = serviceConta;
         this.repositoryConta = repositoryConta;
-        this.serviceInveste = serviceInveste;
         this.repositoryPix = repositoryPix;
-        this.repositoryTransacao = repositoryTransacao;
+        this.serviceTransacao = serviceTransacao;
+        this.cpf = cpf;
     }
 
-    public void conta(Scanner sc, int id_pessoa){
+    public void conta(Scanner sc, int idPessoa){
         do{
-            List<Conta> contaEncontrada = repositoryConta.buscarContaIdPessoa(id_pessoa);
+            List<Conta> contaEncontrada = repositoryConta.buscarContaIdPessoa(idPessoa);
 
             if(contaEncontrada.isEmpty()){
                 System.out.println("Você não possui contas cadastradas.");
@@ -51,8 +51,8 @@ public class ContaController {
             Conta conta = contaEncontrada.get(escolhido - 1);
 
             System.out.println("\n1 - Transações Bancarias:");
-            System.out.println("2 - Ver histórico:");
-            System.out.println("3 - Deletar Pix.");
+            System.out.println("2 - Gestão Pix.");
+            System.out.println("3 - Deletar Conta.");
             System.out.println("4 - Voltar:");
             int menu = sc.nextInt();sc.nextLine();
 
@@ -66,8 +66,7 @@ public class ContaController {
                         System.out.println("\n1 - Depositar:");
                         System.out.println("2 - Sacar:");
                         System.out.println("3 - Transferência via Pix:");
-                        System.out.println("4 - Fazer um investimento bancário.");
-                        System.out.println("5 - voltar:");
+                        System.out.println("4 - voltar:");
                         int menuTransacao = sc.nextInt();
                         sc.nextLine();
 
@@ -81,7 +80,7 @@ public class ContaController {
 
                                     Transacao transacaoDepositar = new Transacao(LocalDateTime.now(), valorDeposito, conta.getSaldo(), TipoTransacao.DEPOSITO, conta);
 
-                                    repositoryTransacao.salvarTransacao(transacaoDepositar);
+                                    serviceTransacao.salvarTransacao(transacaoDepositar);
 
                                 }catch (IllegalArgumentException e) {
                                     System.out.println(e.getMessage());
@@ -101,10 +100,11 @@ public class ContaController {
                                     serviceConta.sacar(conta, valorSaque);
 
                                     Transacao transacaoSacar = new Transacao(LocalDateTime.now(), valorSaque, conta.getSaldo(), TipoTransacao.SAQUE, conta);
-                                    repositoryTransacao.salvarTransacao(transacaoSacar);
+                                    serviceTransacao.salvarTransacao(transacaoSacar);
 
                                 }catch (IllegalArgumentException e) {
                                     System.out.println(e.getMessage());
+                                    break;
                                 }
                                 System.out.println("\nSaldo atualizado!");
                                 break;
@@ -120,34 +120,16 @@ public class ContaController {
                                     serviceConta.transferir(conta, valorTransferencia, chavePix);
 
                                     Transacao transacaoTransferencia = new Transacao(LocalDateTime.now(), valorTransferencia, conta.getSaldo(), TipoTransacao.MOVIMENTACAO, conta);
-                                    repositoryTransacao.salvarTransacao(transacaoTransferencia);
+                                    serviceTransacao.salvarTransacao(transacaoTransferencia);
 
                                 }catch (IllegalArgumentException e){
                                     System.out.println(e.getMessage());
+                                    break;
                                 }
                                 System.out.println("\nTransferência bem sucedida!");
                                 break;
 
                             case 4:
-                                if(conta.getTipoConta() != TipoConta.CONTA_POUPANCA){
-                                    System.out.println("So pode fazer investimento em conta poupança");
-                                }
-
-                                System.out.println("Informe o valor do investimento");
-                                double valorInveste = sc.nextDouble();sc.nextLine();
-
-                                if(valorInveste <= 0){
-                                    System.out.println("Valor incorreto");
-                                    break;
-                                }
-
-                                serviceInveste.SalvarInvestimento(valorInveste, conta);
-
-                                Transacao transacaoInveste = new Transacao(LocalDateTime.now(), valorInveste, conta.getSaldo(), TipoTransacao.INVESTIMENTO, conta);
-                                repositoryTransacao.salvarTransacao(transacaoInveste);
-                                break;
-
-                            case 5:
                                 sairMenuConta = true;
                                 break;
 
@@ -159,21 +141,101 @@ public class ContaController {
                     break;
 
                 case 2:
-                    repositoryTransacao.extrato(conta.getIdConta());
-                    break;
+                    boolean sair = false;
+                    do {
+                        System.out.println("\n1 - Atualizar chave pix.");
+                        System.out.println("2 - Apagar pix");
+                        System.out.println("3 - Voltar ao menu anterior.");
+                        System.out.println("Escolha uma das opções acima.");
+                        int menuPix = sc.nextInt();
+                        sc.nextLine();
+
+                        switch (menuPix) {
+                            case 1:
+                                System.out.println("\nTem certeza que deseja apagar o pix (s/n)");
+                                String escolhaPix = sc.nextLine();
+
+                                if (escolhaPix.equalsIgnoreCase("s")) {
+                                    System.out.println("\nInforme a chave pix.");
+                                    String chave = sc.nextLine();
+
+                                    repositoryPix.apagarPix(chave);
+                                } else {
+                                    break;
+                                }
+                                break;
+
+                            case 2:
+                                System.out.println("\nInforme a chave pix cadastrada.");
+                                String chaveVelha = sc.nextLine();
+
+                                System.out.println("\nescolha a nova chave pix");
+                                System.out.println("1 - CPF");
+                                System.out.println("2 - Telefone:");
+                                System.out.println("3 - Email");
+                                int menuEscolhaPix = sc.nextInt();
+                                sc.nextLine();
+
+                                TipoPix tipoPix = null;
+                                String chave = "";
+
+                                switch (menuEscolhaPix) {
+                                    case 1:
+                                        tipoPix = TipoPix.CPF;
+
+                                        System.out.println("\nInforme o seu Cpf:");
+                                        chave = sc.nextLine();
+                                        cpf.confirmaCpf(chave);
+                                        break;
+                                    case 2:
+                                        tipoPix = TipoPix.TELEFONE;
+
+                                        System.out.println("\nInforme o seu telefone:");
+                                        chave = sc.nextLine();
+                                        break;
+                                    case 3:
+                                        tipoPix = TipoPix.EMAIL;
+
+                                        System.out.println("\nInforme o seu email:");
+                                        chave = sc.nextLine();
+                                        break;
+                                    default:
+                                        System.out.println("\nOpção inválida!\n");
+                                        break;
+                                }
+
+                                if (tipoPix == null) {
+                                    System.out.println("ERRO! ao salvar chave.");
+                                    break;
+                                }
+                                repositoryPix.updateChave(chaveVelha, tipoPix, chave);
+                                break;
+
+                            case 3:
+                                System.out.println();
+                                sair = true;
+                                break;
+
+                            default:
+                                System.out.println("\nOpção inválida!\n");
+                                break;
+                        }
+                    }while (!sair);
 
                 case 3:
-                    System.out.println("\nTem certeza que deseja apagar o pix (s/n)");
-                    String escolha = sc.nextLine();
+                    System.out.println("\nTem certeza que deseja apagar conta (s/n)");
+                    String escolhaConta = sc.nextLine();
 
-                    if(escolha.equalsIgnoreCase("s")){
-                        System.out.println("\nInforme a chave pix.");
-                        String chave = sc.nextLine();
-
-                        repositoryPix.apagarPix(chave);
-                    }else{
+                    if(escolhaConta.equalsIgnoreCase("n")){
                         break;
                     }
+
+                    if(conta.getSaldo() == 0){
+                        System.out.println("Cooperado precisa que o saldo esteja zerado.");
+                        break;
+                    }
+
+                    repositoryConta.apagarConta(conta);
                     break;
 
                 case 4:

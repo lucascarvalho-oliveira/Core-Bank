@@ -39,19 +39,59 @@ public class PessoaRepository {
         ){
             stmt.setString(1, documento);
 
-            ResultSet rs = stmt.executeQuery();
+            try(ResultSet rs = stmt.executeQuery()) {
 
-            if(rs.next()){
-                Pessoa pessoa = new Pessoa();
+                if (rs.next()) {
+                    Pessoa pessoa = new Pessoa();
 
-                pessoa.setIdPessoa(rs.getInt("id_pessoa"));
-                pessoa.setSenha(rs.getString("senha"));
+                    pessoa.setIdPessoa(rs.getInt("id_pessoa"));
+                    pessoa.setSenha(rs.getString("senha"));
 
-                return  pessoa;
+                    return pessoa;
+                }
             }
         }catch (SQLException e){
             System.out.println("\nERRO! pessoa nao encontrada.\n" + e.getMessage());
         }
         return null;
+    }
+
+    public void atualizarSenha(String documento, String senha){
+        String sql = "UPDATE pessoa SET senha = ? WHERE documento = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ){
+            stmt.setString(1, senha);
+            stmt.setString(2, documento);
+
+            int linhaAfetada = stmt.executeUpdate();
+
+            if(linhaAfetada > 0){
+                System.out.println("\nSenha atualizada com sucesso.");
+            }
+
+        }catch (SQLException e){
+            System.out.println("\nERRO! senha nao atualizada.\n" + e.getMessage());
+        }
+    }
+
+    public void apagarPessoa(String documento){
+        String sql = "DELETE FROM pessoa WHERE documento = ?";
+
+        try(Connection conn = new Conexao().conectar();
+            PreparedStatement stmt = conn.prepareStatement(sql)
+        ){
+            stmt.setString(1, documento);
+
+            int linhaAfetada = stmt.executeUpdate();
+
+            if(linhaAfetada > 0){
+                System.out.println("\nCooperado desligado com sucesso.");
+            }
+
+        }catch (SQLException e){
+            System.out.println("\nERRO! ao desligar cooperado.\n" + e.getMessage());
+        }
     }
 }
