@@ -7,6 +7,7 @@ import model.enums.TipoTransacao;
 import repository.ContaRepository;
 import repository.PixRepository;
 import service.ContaService;
+import service.PixService;
 import service.TransacaoService;
 
 import java.time.LocalDateTime;
@@ -16,14 +17,14 @@ import java.util.Scanner;
 public class ContaPixController {
     private ContaService serviceConta;
     private ContaRepository repositoryConta;
-    private PixRepository repositoryPix;
+    private PixService servicePix;
     private TransacaoService serviceTransacao;
     private CPF cpf;
 
-    public ContaPixController(ContaService serviceConta, ContaRepository repositoryConta, PixRepository repositoryPix, TransacaoService serviceTransacao, CPF cpf){
+    public ContaPixController(ContaService serviceConta, ContaRepository repositoryConta, PixService servicePix, TransacaoService serviceTransacao, CPF cpf){
         this.serviceConta = serviceConta;
         this.repositoryConta = repositoryConta;
-        this.repositoryPix = repositoryPix;
+        this.servicePix = servicePix;
         this.serviceTransacao = serviceTransacao;
         this.cpf = cpf;
     }
@@ -152,20 +153,6 @@ public class ContaPixController {
 
                         switch (menuPix) {
                             case 1:
-                                System.out.println("\nTem certeza que deseja apagar o pix (s/n)");
-                                String escolhaPix = sc.nextLine();
-
-                                if (escolhaPix.equalsIgnoreCase("s")) {
-                                    System.out.println("\nInforme a chave pix.");
-                                    String chave = sc.nextLine();
-
-                                    repositoryPix.apagarPix(chave);
-                                } else {
-                                    break;
-                                }
-                                break;
-
-                            case 2:
                                 System.out.println("\nInforme a chave pix cadastrada.");
                                 String chaveVelha = sc.nextLine();
 
@@ -208,7 +195,21 @@ public class ContaPixController {
                                     System.out.println("ERRO! ao salvar chave.");
                                     break;
                                 }
-                                repositoryPix.updateChave(chaveVelha, tipoPix, chave);
+                                servicePix.updateChave(chaveVelha, tipoPix, chave);
+                                break;
+
+                            case 2:
+                                System.out.println("\nTem certeza que deseja apagar o pix (s/n)");
+                                String escolhaPix = sc.nextLine();
+
+                                if (escolhaPix.equalsIgnoreCase("s")) {
+                                    System.out.println("\nInforme a chave pix.");
+                                    String chavePix = sc.nextLine();
+
+                                    servicePix.apagarPix(chavePix);
+                                } else {
+                                    break;
+                                }
                                 break;
 
                             case 3:
@@ -230,12 +231,12 @@ public class ContaPixController {
                         break;
                     }
 
-                    if(conta.getSaldo() == 0){
-                        System.out.println("Cooperado precisa que o saldo esteja zerado.");
-                        break;
-                    }
+                    try {
+                        serviceConta.apagarConta(conta);
 
-                    repositoryConta.apagarConta(conta);
+                    }catch (IllegalArgumentException e){
+                        System.out.println(e.getMessage());
+                    }
                     break;
 
                 case 4:
