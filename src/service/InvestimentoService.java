@@ -27,4 +27,18 @@ public class InvestimentoService {
 
         repositoryInveste.salvarInvestimento(investimento);
     }
+
+    public void atualizarValor(double valorInvest, int idInvestimento, Conta conta){
+        if(valorInvest <= 0){
+            throw new IllegalArgumentException("Valor incorreto.");
+        }
+
+        serviceConta.sacar(conta, valorInvest);
+
+        repositoryInveste.atualizarValor(valorInvest, idInvestimento);
+    }
+
+    public void deletarInvest(int idInvestimento){
+        repositoryInveste.deletarInvest(idInvestimento);
+    }
 }

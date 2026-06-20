@@ -3,6 +3,8 @@ package service;
 import model.Transacao;
 import repository.TransacaoRepository;
 
+import java.time.LocalDateTime;
+
 public class TransacaoService {
     private TransacaoRepository repositoryTransacao;
 
@@ -19,5 +21,13 @@ public class TransacaoService {
         }
 
         repositoryTransacao.salvarTransacao(transacao);
+    }
+
+    public void updateData(LocalDateTime dataNova, int idTransacao){
+        repositoryTransacao.updateData(dataNova, idTransacao);
+    }
+
+    public void apagarTransacao(int idConta){
+        repositoryTransacao.apagarTransacao(idConta);
     }
 }

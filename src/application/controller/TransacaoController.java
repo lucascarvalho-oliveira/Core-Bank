@@ -4,6 +4,7 @@ import model.Conta;
 import model.Transacao;
 import repository.ContaRepository;
 import repository.TransacaoRepository;
+import service.TransacaoService;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -12,10 +13,12 @@ import java.util.Scanner;
 
 public class TransacaoController {
     private TransacaoRepository repositoryTransacao;
+    private TransacaoService serviceTransacao;
     private ContaRepository repositoryConta;
 
-    public TransacaoController(TransacaoRepository repositoryTransacao, ContaRepository repositoryConta){
+    public TransacaoController(TransacaoRepository repositoryTransacao, TransacaoService serviceTransacao, ContaRepository repositoryConta){
         this.repositoryTransacao = repositoryTransacao;
+        this.serviceTransacao = serviceTransacao;
         this.repositoryConta = repositoryConta;
     }
 
@@ -60,7 +63,7 @@ public class TransacaoController {
                     for(int i = 0; i < transacaoEncontrada.size(); i++){
                         System.out.println(i + 1 + " - " + "Tipo de transação: " + transacaoEncontrada.get(i).getTipoTransacao() + "Data e hora: " + transacaoEncontrada.get(i).getData_hora().format(formatador));
                     }
-                    int escolhaTransacao = sc.nextInt();
+                    int escolhaTransacao = sc.nextInt();sc.nextLine();
 
                     if(escolhaTransacao < 0 || escolhaTransacao > transacaoEncontrada.size()){
                         System.out.println("Escolha incorreto.");
@@ -72,9 +75,9 @@ public class TransacaoController {
                     System.out.println("\nInforme a data e a hora (dd/MM/yyyy HH:mm:ss).");
                     String dataDigitada = sc.nextLine();
 
-                    LocalDateTime dataNova = LocalDateTime.parse(dataDigitada);
+                    LocalDateTime dataNova = LocalDateTime.parse(dataDigitada, formatador);
 
-                    repositoryTransacao.updateData(dataNova, transacao.getIdTransacao());
+                    serviceTransacao.updateData(dataNova, transacao.getIdTransacao());
                     break;
 
                 case 3:
@@ -85,7 +88,7 @@ public class TransacaoController {
                         break;
                     }
 
-                    repositoryTransacao.apagarTransacao(conta.getIdConta());
+                    serviceTransacao.apagarTransacao(conta.getIdConta());
                     break;
 
                 case 4:

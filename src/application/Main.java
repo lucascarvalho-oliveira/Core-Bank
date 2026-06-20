@@ -35,6 +35,7 @@ public class Main {
         TransacaoService serviceTransacao = new TransacaoService(repositoryTransacao);
 
         boolean sair = false;
+        Pessoa pessoaLogada = null;
         do {
             System.out.println("==================== Core Bank ====================");
             System.out.println("1 - Criar conta:");
@@ -44,8 +45,6 @@ public class Main {
             System.out.println("5 - Transação:");
             System.out.println("6 - sair do sistema:");
             int menu = sc.nextInt();sc.nextLine();
-
-            Pessoa pessoaLogada = null;
 
             switch (menu){
                 case 1:
@@ -62,7 +61,7 @@ public class Main {
                     LoginController controllerLogin = new LoginController(repositoryPessoa, senha);
                     pessoaLogada  = controllerLogin.loginPessoa(sc);
 
-                    ContaPixController controllerConta = new ContaPixController(serviceConta, repositoryConta, repositoryPix, serviceTransacao, cpf);
+                    ContaPixController controllerConta = new ContaPixController(serviceConta, repositoryConta, servicePix, serviceTransacao, cpf);
                     controllerConta.conta(sc, pessoaLogada.getIdPessoa());
                     break;
 
@@ -82,7 +81,9 @@ public class Main {
                         break;
                     }
 
-
+                    TransacaoController controllerTransacao = new TransacaoController(repositoryTransacao, serviceTransacao, repositoryConta);
+                    controllerTransacao.transacao(sc, pessoaLogada.getIdPessoa());
+                    break;
 
                 case 6:
                     System.out.println("\nPrograma finalizado!");

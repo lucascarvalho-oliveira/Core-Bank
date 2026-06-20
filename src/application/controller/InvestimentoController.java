@@ -96,6 +96,7 @@ public class InvestimentoController {
 
                     if(escolhaInvest <= 0 || escolhaInvest > investEncontrado.size()){
                         System.out.println("\nInvestimento incorreta\n");
+                        break;
                     }
 
                     Investimento investimento = investEncontrado.get(escolhaInvest - 1);
@@ -116,13 +117,11 @@ public class InvestimentoController {
                                 sc.nextLine();
 
                                 try {
-                                    serviceConta.sacar(conta, valorInvest);
+                                    serviceInveste.atualizarValor(valorInvest, investimento.getIdInvestimento(), conta);
 
-                                } catch (IllegalArgumentException e) {
+                                }catch (IllegalArgumentException e){
                                     System.out.println(e.getMessage());
                                 }
-
-                                repositoryInveste.atualizarValor(valorInvest, investimento.getIdInvestimento());
 
                                 Transacao transacaoInvesteUP = new Transacao(LocalDateTime.now(), valorInvest, conta.getSaldo(), TipoTransacao.INVESTIMENTO, conta);
                                 serviceTransacao.salvarTransacao(transacaoInvesteUP);
@@ -143,7 +142,7 @@ public class InvestimentoController {
                                     System.out.println(e.getMessage());
                                 }
 
-                                repositoryInveste.deletarInvest(investimento.getIdInvestimento());
+                                serviceInveste.deletarInvest(investimento.getIdInvestimento());
                                 break;
 
                             case 3:

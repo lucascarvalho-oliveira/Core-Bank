@@ -65,4 +65,12 @@ public class ContaService {
 
         depositar(contaDestino, valor);
     }
+
+    public void apagarConta(Conta conta){
+        if(conta.getSaldo() == 0){
+            throw new IllegalArgumentException("Cooperado precisa que o saldo esteja zerado.");
+        }
+
+        repositoryConta.apagarConta(conta);
+    }
 }
