@@ -1,7 +1,6 @@
 package repository;
 
 import database.Conexao;
-import model.Conta;
 import model.Transacao;
 import model.enums.TipoTransacao;
 
