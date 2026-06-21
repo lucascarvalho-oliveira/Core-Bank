@@ -52,6 +52,7 @@ public class CooperadoController {
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());
+                        break;
                     }
 
                     repositoryPessoa.atualizarSenha(documento, senhaNova);
