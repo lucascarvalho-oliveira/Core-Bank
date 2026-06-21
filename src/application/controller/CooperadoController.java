@@ -22,6 +22,11 @@ public class CooperadoController {
 
             Pessoa pessoa = repositoryPessoa.buscarPessoa(documento);
 
+            if(pessoa == null){
+                System.out.println("\nCooperado nao encontrado\n");
+                return;
+            }
+
             System.out.println("\n1 - Atualizar senha.");
             System.out.println("2 - Remover cooperado.");
             System.out.println("3 - Voltar ao menu anterior.");
@@ -44,7 +49,6 @@ public class CooperadoController {
 
                     try {
                         senha.confirmaSenha(senhaNova);
-                        break;
 
                     } catch (IllegalArgumentException e) {
                         System.out.println(e.getMessage());

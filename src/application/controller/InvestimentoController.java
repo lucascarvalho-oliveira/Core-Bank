@@ -54,6 +54,7 @@ public class InvestimentoController {
         Conta conta = contaEncontrada.get(escolhido - 1);
         if(conta.getTipoConta() != TipoConta.CONTA_POUPANCA){
             System.out.println("So pode fazer investimento em conta poupança");
+            return;
         }
 
         do{
@@ -155,6 +156,7 @@ public class InvestimentoController {
                                 break;
                         }
                     }while (!sair);
+                    break;
 
                 case 4:
                     System.out.println();

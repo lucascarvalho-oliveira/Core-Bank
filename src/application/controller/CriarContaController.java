@@ -75,6 +75,11 @@ public class CriarContaController {
 
                     Pessoa pessoa = repositoryPessoa.buscarPessoa(doc);
 
+                    if(pessoa == null){
+                        System.out.println("\nPessoa nao encontrada\n");
+                        break;
+                    }
+
                     System.out.println("\nQual o tipo da conta que voce deseja criar:\n");
                     System.out.println("1 - Conta Corrente:");
                     System.out.println("Ideal para movimentações do dia a dia.\n" +

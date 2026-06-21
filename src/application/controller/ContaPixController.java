@@ -220,8 +220,10 @@ public class ContaPixController {
                             default:
                                 System.out.println("\nOpção inválida!\n");
                                 break;
+
                         }
                     }while (!sair);
+                    break;
 
                 case 3:
                     System.out.println("\nTem certeza que deseja apagar conta (s/n)");
