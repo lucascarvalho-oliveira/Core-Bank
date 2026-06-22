@@ -43,4 +43,24 @@ public class PessoaService {
 
         repositoryPessoa.salvarPessoa(pessoa);
     }
+
+    public void atualizarSenha(Pessoa pessoa, String senhaDigitada, String documento, String senhaNova){
+        if (!senha.validarSenha(pessoa, senhaDigitada)) {
+            throw new IllegalArgumentException("Senha incorreta.");
+        }
+
+        try {
+            senha.confirmaSenha(senhaNova);
+
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+            return;
+        }
+
+        repositoryPessoa.atualizarSenha(documento, senhaNova);
+    }
+
+    public void apagarPessoa(String documento){
+        repositoryPessoa.apagarPessoa(documento);
+    }
 }

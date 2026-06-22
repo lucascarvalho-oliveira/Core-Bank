@@ -53,7 +53,7 @@ public class Main {
                     break;
 
                 case 2:
-                    CooperadoController controllerCooperado = new CooperadoController(repositoryPessoa, senha);
+                    CooperadoController controllerCooperado = new CooperadoController(repositoryPessoa, servicePessoa);
                     controllerCooperado.cooperado(sc);
                     break;
 

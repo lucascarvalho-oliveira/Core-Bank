@@ -3,16 +3,17 @@ package application.controller;
 import model.Pessoa;
 import model.Senha;
 import repository.PessoaRepository;
+import service.PessoaService;
 
 import java.util.Scanner;
 
 public class CooperadoController {
     private PessoaRepository repositoryPessoa;
-    private Senha senha;
+    private PessoaService servicePessoa;
 
-    public CooperadoController(PessoaRepository repositoryPessoa, Senha senha) {
+    public CooperadoController(PessoaRepository repositoryPessoa, PessoaService servicePessoa) {
         this.repositoryPessoa = repositoryPessoa;
-        this.senha = senha;
+        this.servicePessoa = servicePessoa;
     }
 
     public void cooperado(Scanner sc) {
@@ -31,31 +32,17 @@ public class CooperadoController {
             System.out.println("2 - Remover cooperado.");
             System.out.println("3 - Voltar ao menu anterior.");
             System.out.println("Escolha uma das opções acima.");
-            int menu = sc.nextInt();
-            sc.nextLine();
+            int menu = sc.nextInt();sc.nextLine();
 
             switch (menu) {
                 case 1:
                     System.out.println("Informe a antiga senha.");
                     String senhaDigitada = sc.nextLine();
 
-                    if (!senha.validarSenha(pessoa, senhaDigitada)) {
-                        System.out.println("Senha incorreta.");
-                        break;
-                    }
-
                     System.out.println("Informe a nova senha.");
                     String senhaNova = sc.nextLine();
 
-                    try {
-                        senha.confirmaSenha(senhaNova);
-
-                    } catch (IllegalArgumentException e) {
-                        System.out.println(e.getMessage());
-                        break;
-                    }
-
-                    repositoryPessoa.atualizarSenha(documento, senhaNova);
+                    servicePessoa.atualizarSenha(pessoa, senhaDigitada, documento, senhaNova);
                     break;
 
                 case 2:
@@ -63,7 +50,7 @@ public class CooperadoController {
                     String escolha = sc.nextLine();
 
                     if (escolha.equalsIgnoreCase("s")) {
-                        repositoryPessoa.apagarPessoa(documento);
+                        servicePessoa.apagarPessoa(documento);
                     } else {
                         break;
                     }
